@@ -8,6 +8,7 @@ import MasterMap  from '@/pages/MasterMap'
 import Dashboard  from '@/pages/Dashboard'
 import Report     from '@/pages/Report'
 import Login      from '@/pages/Login'
+import KaizenPage from '@/pages/KaizenPage'
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/master"                  element={<MasterMap />} />
         <Route path="/dashboard"               element={<Dashboard />} />
         <Route path="/report"                  element={<Report />} />
+        <Route path="/kaizen"                  element={<KaizenPage />} />
         <Route path="/login"                   element={<Login />} />
       </Routes>
     </BrowserRouter>

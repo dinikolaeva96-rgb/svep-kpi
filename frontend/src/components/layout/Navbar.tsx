@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/auth'
 const links = [
   { to: '/',          label: 'Экосистема' },
   { to: '/master',    label: 'Мастер-карта' },
+  { to: '/kaizen',    label: '💡 Кайдзен' },
   { to: '/dashboard', label: 'Дашборд' },
   { to: '/report',    label: 'Отчёт' },
 ]

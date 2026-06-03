@@ -27,6 +27,12 @@ app.use('/api/kaizen',      kaizenRoutes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true, ts: new Date().toISOString() }));
 
+// Быстрый справочник доменов
+const db = require('./db');
+app.get('/api/domains', (_, res) => {
+  res.json(db.prepare('SELECT * FROM domains ORDER BY sort_order').all());
+});
+
 app.use((err, req, res, _next) => {
   console.error(err);
   res.status(500).json({ error: 'Внутренняя ошибка сервера' });
