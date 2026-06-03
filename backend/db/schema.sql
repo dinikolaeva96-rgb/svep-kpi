@@ -94,7 +94,23 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Журнал аудита
+CREATE TABLE IF NOT EXISTS audit_log (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  user_id    INTEGER REFERENCES users(id),
+  user_name  TEXT,
+  action     TEXT NOT NULL,
+  entity     TEXT NOT NULL,
+  entity_id  INTEGER,
+  old_value  TEXT,
+  new_value  TEXT,
+  ip         TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Индексы
+CREATE INDEX IF NOT EXISTS idx_audit_entity         ON audit_log(entity, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_user           ON audit_log(user_id);
 CREATE INDEX IF NOT EXISTS idx_kpi_values_indicator ON kpi_values(indicator_id);
 CREATE INDEX IF NOT EXISTS idx_kpi_values_period    ON kpi_values(period_year, period_month);
 CREATE INDEX IF NOT EXISTS idx_kaizen_dept          ON kaizen(dept_id);

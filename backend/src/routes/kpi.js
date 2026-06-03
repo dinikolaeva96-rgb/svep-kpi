@@ -3,6 +3,7 @@
 const router = require('express').Router();
 const db     = require('../db');
 const { requireRole } = require('../middleware/auth');
+const { audit }       = require('../middleware/audit');
 
 // GET /api/kpi/:dept_id  — все KPI отдела с последними значениями
 router.get('/:dept_id', (req, res) => {
@@ -69,9 +70,13 @@ router.put('/:dept_id/:indicator_id', requireRole('dept_head'), (req, res) => {
   const { year, month, actual, plan, comment } = req.body || {};
   if (!year || !month) return res.status(400).json({ error: 'year и month обязательны' });
 
-  const indicator = db.prepare('SELECT id FROM indicators WHERE id = ? AND dept_id = ?')
+  const indicator = db.prepare('SELECT id, name FROM indicators WHERE id = ? AND dept_id = ?')
     .get(req.params.indicator_id, req.params.dept_id);
   if (!indicator) return res.status(404).json({ error: 'Показатель не найден' });
+
+  const old = db.prepare(
+    'SELECT actual, plan, comment FROM kpi_values WHERE indicator_id=? AND period_year=? AND period_month=?'
+  ).get(indicator.id, year, month);
 
   db.prepare(`
     INSERT INTO kpi_values (indicator_id, period_year, period_month, actual, plan, comment, entered_by)
@@ -88,6 +93,8 @@ router.put('/:dept_id/:indicator_id', requireRole('dept_head'), (req, res) => {
     entered_by: req.user?.sub ?? null,
   });
 
+  audit(req, old ? 'update' : 'create', 'kpi_value', indicator.id,
+    old ?? null, { year, month, actual, plan, comment });
   res.json({ ok: true });
 });
 

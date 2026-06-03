@@ -131,6 +131,45 @@ export interface TrendPoint {
   score: number | null
 }
 
+export interface UserRecord {
+  id: number
+  email: string
+  name: string
+  role: UserRole
+  dept_id: number | null
+  dept_name: string | null
+  is_active: number
+  created_at: string
+  last_login: string | null
+}
+
+export interface AuditEntry {
+  id: number
+  user_id: number | null
+  user_name: string
+  action: string
+  entity: string
+  entity_id: number | null
+  old_value: any
+  new_value: any
+  ip: string | null
+  created_at: string
+}
+
+export interface AuditResponse {
+  total: number
+  limit: number
+  offset: number
+  rows: AuditEntry[]
+}
+
+export interface IndicatorFull extends Indicator {
+  dept_name: string
+  domain_name: string
+  domain_code: string
+  domain_color: string
+}
+
 export type UserRole = 'admin' | 'dept_head' | 'management' | 'public'
 
 export interface AuthUser {

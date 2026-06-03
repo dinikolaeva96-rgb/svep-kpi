@@ -6,13 +6,16 @@ const express = require('express');
 const cors    = require('cors');
 
 const { attachUser } = require('./middleware/auth');
-const authRoutes     = require('./routes/auth');
-const deptRoutes     = require('./routes/departments');
-const kpiRoutes      = require('./routes/kpi');
-const masterRoute    = require('./routes/master');
-const kaizenRoutes   = require('./routes/kaizen');
-const alertRoutes    = require('./routes/alerts');
-const trendsRoutes   = require('./routes/trends');
+const authRoutes       = require('./routes/auth');
+const deptRoutes       = require('./routes/departments');
+const kpiRoutes        = require('./routes/kpi');
+const masterRoute      = require('./routes/master');
+const kaizenRoutes     = require('./routes/kaizen');
+const alertRoutes      = require('./routes/alerts');
+const trendsRoutes     = require('./routes/trends');
+const usersRoutes      = require('./routes/users');
+const indicatorsRoutes = require('./routes/indicators');
+const auditRoutes      = require('./routes/auditlog');
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -28,10 +31,12 @@ app.use('/api/master',      masterRoute);
 app.use('/api/kaizen',      kaizenRoutes);
 app.use('/api/alerts',      alertRoutes);
 app.use('/api/trends',      trendsRoutes);
+app.use('/api/users',       usersRoutes);
+app.use('/api/indicators',  indicatorsRoutes);
+app.use('/api/audit',       auditRoutes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true, ts: new Date().toISOString() }));
 
-// Быстрый справочник доменов
 const db = require('./db');
 app.get('/api/domains', (_, res) => {
   res.json(db.prepare('SELECT * FROM domains ORDER BY sort_order').all());

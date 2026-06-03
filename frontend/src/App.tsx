@@ -11,6 +11,7 @@ import Login       from '@/pages/Login'
 import KaizenPage  from '@/pages/KaizenPage'
 import AlertsPage  from '@/pages/AlertsPage'
 import ProfilePage from '@/pages/ProfilePage'
+import AdminPage   from '@/pages/AdminPage'
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/kaizen"                  element={<KaizenPage />} />
         <Route path="/alerts"                  element={<AlertsPage />} />
         <Route path="/profile"                 element={<ProfilePage />} />
+        <Route path="/admin"                   element={<AdminPage />} />
         <Route path="/login"                   element={<Login />} />
       </Routes>
     </BrowserRouter>
