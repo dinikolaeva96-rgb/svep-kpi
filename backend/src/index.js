@@ -16,6 +16,8 @@ const trendsRoutes     = require('./routes/trends');
 const usersRoutes      = require('./routes/users');
 const indicatorsRoutes = require('./routes/indicators');
 const auditRoutes      = require('./routes/auditlog');
+const swaggerUi        = require('swagger-ui-express');
+const apiSpec          = require('./openapi');
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -36,6 +38,12 @@ app.use('/api/indicators',  indicatorsRoutes);
 app.use('/api/audit',       auditRoutes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true, ts: new Date().toISOString() }));
+
+// Swagger UI — документация API
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(apiSpec, {
+  customSiteTitle: 'СВЭП API Docs',
+  customCss: '.swagger-ui .topbar { background: #1E3A5F; } .swagger-ui .topbar-wrapper img { display: none; } .swagger-ui .topbar-wrapper::before { content: "⚡ Экосистема СВЭП"; color: #E8A020; font-weight: bold; font-size: 18px; }',
+}));
 
 const db = require('./db');
 app.get('/api/domains', (_, res) => {
