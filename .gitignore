@@ -1,5 +1,7 @@
 node_modules/
 backend/db/svep.db
+backend/db/svep.db-shm
+backend/db/svep.db-wal
 backend/.env
 frontend/dist/
 *.local
