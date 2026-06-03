@@ -1,5 +1,5 @@
 import api from './client'
-import type { Department, KpiResponse, MasterResponse, KaizenItem } from '@/types'
+import type { Department, KpiResponse, MasterResponse, KaizenItem, AlertsResponse, TrendPoint } from '@/types'
 
 export const getDepartments = () =>
   api.get<Department[]>('/departments').then(r => r.data)
@@ -15,6 +15,15 @@ export const getKpiIndicator = (deptId: number | string, indicatorId: number | s
 
 export const getMaster = (year?: number, month?: number) =>
   api.get<MasterResponse>('/master', { params: { year, month } }).then(r => r.data)
+
+export const getAlerts = (year?: number, month?: number) =>
+  api.get<AlertsResponse>('/alerts', { params: { year, month } }).then(r => r.data)
+
+export const getTrends = (deptId: number | string, months = 6) =>
+  api.get<{ dept_id: number; points: TrendPoint[] }>(`/trends/${deptId}`, { params: { months } }).then(r => r.data)
+
+export const getCompanyTrends = (months = 12) =>
+  api.get<{ points: TrendPoint[] }>('/trends/company/summary', { params: { months } }).then(r => r.data)
 
 export const getKaizen = (params?: { dept_id?: number; status?: string }) =>
   api.get<KaizenItem[]>('/kaizen', { params }).then(r => r.data)

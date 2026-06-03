@@ -4,6 +4,7 @@ import { useAuthStore } from '@/store/auth'
 const links = [
   { to: '/',          label: 'Экосистема' },
   { to: '/master',    label: 'Мастер-карта' },
+  { to: '/alerts',    label: '🚨 Алерты' },
   { to: '/kaizen',    label: '💡 Кайдзен' },
   { to: '/dashboard', label: 'Дашборд' },
   { to: '/report',    label: 'Отчёт' },
@@ -40,7 +41,7 @@ export default function Navbar() {
         <div className="shrink-0 flex items-center gap-3">
           {user ? (
             <>
-              <span className="text-xs text-gray-400 hidden md:block">{user.name}</span>
+              <Link to="/profile" className="text-xs text-gray-400 hidden md:block hover:text-white transition-colors">{user.name}</Link>
               <span className="text-xs px-2 py-0.5 rounded bg-blue-900 text-blue-300">{user.role}</span>
               <button onClick={logout} className="text-xs text-gray-500 hover:text-red-400">Выйти</button>
             </>

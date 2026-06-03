@@ -88,6 +88,49 @@ export interface KaizenItem {
   created_at: string
 }
 
+export interface AlertItem {
+  indicator_id: number
+  code: string
+  name: string
+  unit: string
+  target: number
+  warning_thr: number
+  critical_thr: number
+  weight: number
+  dept_id: number
+  dept_name: string
+  domain_code: string
+  domain_name: string
+  domain_color: string
+  domain_icon: string
+  actual: number | null
+  plan: number | null
+  comment: string | null
+  prev_actual: number | null
+  status: 'red' | 'yellow'
+  trend: 'up' | 'down' | 'stable'
+}
+
+export interface AlertsResponse {
+  year: number
+  month: number
+  summary: {
+    total: number
+    red: number
+    yellow: number
+    no_data: number
+    green: number
+  }
+  alerts: AlertItem[]
+}
+
+export interface TrendPoint {
+  year: number
+  month: number
+  label: string
+  score: number | null
+}
+
 export type UserRole = 'admin' | 'dept_head' | 'management' | 'public'
 
 export interface AuthUser {

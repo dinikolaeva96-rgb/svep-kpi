@@ -76,4 +76,21 @@ router.post('/logout', (req, res) => {
   res.json({ ok: true });
 });
 
+// POST /api/auth/change-password
+router.post('/change-password', (req, res) => {
+  if (!req.user) return res.status(401).json({ error: 'Требуется авторизация' });
+  const { oldPassword, newPassword } = req.body || {};
+  if (!oldPassword || !newPassword) return res.status(400).json({ error: 'Поля обязательны' });
+  if (newPassword.length < 8) return res.status(400).json({ error: 'Минимум 8 символов' });
+
+  const user = db.prepare('SELECT * FROM users WHERE id = ?').get(req.user.sub);
+  if (!user || !bcrypt.compareSync(oldPassword, user.password_hash)) {
+    return res.status(401).json({ error: 'Неверный текущий пароль' });
+  }
+
+  db.prepare('UPDATE users SET password_hash = ? WHERE id = ?')
+    .run(bcrypt.hashSync(newPassword, 10), user.id);
+  res.json({ ok: true });
+});
+
 module.exports = router;

@@ -11,6 +11,8 @@ const deptRoutes     = require('./routes/departments');
 const kpiRoutes      = require('./routes/kpi');
 const masterRoute    = require('./routes/master');
 const kaizenRoutes   = require('./routes/kaizen');
+const alertRoutes    = require('./routes/alerts');
+const trendsRoutes   = require('./routes/trends');
 
 const app  = express();
 const PORT = process.env.PORT || 3001;
@@ -24,6 +26,8 @@ app.use('/api/departments', deptRoutes);
 app.use('/api/kpi',         kpiRoutes);
 app.use('/api/master',      masterRoute);
 app.use('/api/kaizen',      kaizenRoutes);
+app.use('/api/alerts',      alertRoutes);
+app.use('/api/trends',      trendsRoutes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true, ts: new Date().toISOString() }));
 
