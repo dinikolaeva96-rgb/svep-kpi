@@ -1,0 +1,6 @@
+node_modules/
+backend/db/svep.db
+backend/.env
+frontend/dist/
+*.local
+.DS_Store

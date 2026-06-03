@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --svep-blue:   #1E3A5F;
+  --svep-accent: #E8A020;
+}
+
+body {
+  @apply bg-gray-950 text-gray-100 font-sans antialiased;
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.status-green  { @apply bg-green-500/20 text-green-400 border border-green-500/30; }
+.status-yellow { @apply bg-yellow-500/20 text-yellow-400 border border-yellow-500/30; }
+.status-red    { @apply bg-red-500/20 text-red-400 border border-red-500/30; }
+.status-nodata { @apply bg-gray-700/20 text-gray-500 border border-gray-600/30; }
