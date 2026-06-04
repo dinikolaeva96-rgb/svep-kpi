@@ -6,19 +6,24 @@ const jwt     = require('jsonwebtoken');
 const crypto  = require('crypto');
 const db      = require('../db');
 
+const JWT_SECRET         = process.env.JWT_SECRET          || 'svep-secret-2026';
+const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET  || 'svep-refresh-2026';
+const JWT_EXPIRES_IN     = process.env.JWT_EXPIRES_IN      || '15m';
+const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || '7d';
+
 function signAccess(user) {
   return jwt.sign(
     { sub: user.id, email: user.email, role: user.role, dept_id: user.dept_id, name: user.name },
-    process.env.JWT_SECRET,
-    { expiresIn: process.env.JWT_EXPIRES_IN || '15m' }
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
   );
 }
 
 function signRefresh(user) {
   return jwt.sign(
     { sub: user.id },
-    process.env.JWT_REFRESH_SECRET,
-    { expiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d' }
+    JWT_REFRESH_SECRET,
+    { expiresIn: JWT_REFRESH_EXPIRES_IN }
   );
 }
 
@@ -50,7 +55,7 @@ router.post('/refresh', (req, res) => {
 
   let payload;
   try {
-    payload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    payload = jwt.verify(refreshToken, JWT_REFRESH_SECRET);
   } catch {
     return res.status(401).json({ error: 'Недействительный токен' });
   }

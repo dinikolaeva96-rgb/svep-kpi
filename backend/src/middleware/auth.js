@@ -2,6 +2,7 @@
 
 const jwt = require('jsonwebtoken');
 
+const JWT_SECRET  = process.env.JWT_SECRET || 'svep-secret-2026';
 const ROLE_LEVELS = { public: 0, dept_head: 1, management: 2, admin: 3 };
 
 /**
@@ -12,7 +13,7 @@ function attachUser(req, res, next) {
   const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
   if (!token) return next();
   try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = jwt.verify(token, JWT_SECRET);
   } catch {
     // invalid token — treated as anonymous
   }
