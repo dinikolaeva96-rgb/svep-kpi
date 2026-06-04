@@ -5,7 +5,8 @@ require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
 
-const { attachUser } = require('./middleware/auth');
+const db               = require('./db');
+const { attachUser }   = require('./middleware/auth');
 const authRoutes       = require('./routes/auth');
 const deptRoutes       = require('./routes/departments');
 const kpiRoutes        = require('./routes/kpi');
@@ -39,13 +40,11 @@ app.use('/api/audit',       auditRoutes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true, ts: new Date().toISOString() }));
 
-// Swagger UI — документация API
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(apiSpec, {
   customSiteTitle: 'СВЭП API Docs',
   customCss: '.swagger-ui .topbar { background: #1E3A5F; } .swagger-ui .topbar-wrapper img { display: none; } .swagger-ui .topbar-wrapper::before { content: "⚡ Экосистема СВЭП"; color: #E8A020; font-weight: bold; font-size: 18px; }',
 }));
 
-const db = require('./db');
 app.get('/api/domains', (_, res) => {
   res.json(db.prepare('SELECT * FROM domains ORDER BY sort_order').all());
 });
@@ -55,4 +54,10 @@ app.use((err, req, res, _next) => {
   res.status(500).json({ error: 'Внутренняя ошибка сервера' });
 });
 
-app.listen(PORT, () => console.log(`🚀  Backend запущен на порту ${PORT}`));
+// Initialise sql.js (async WASM load) then start listening
+db.init().then(() => {
+  app.listen(PORT, () => console.log(`🚀  Backend запущен на порту ${PORT}`));
+}).catch(err => {
+  console.error('Ошибка инициализации БД:', err);
+  process.exit(1);
+});
