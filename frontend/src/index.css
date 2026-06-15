@@ -2,23 +2,82 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@font-face {
+  font-family: 'BrutalType';
+  src: url('./assets/fonts/BrutalType.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BrutalType';
+  src: url('./assets/fonts/BrutalTypeBlack.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-  --svep-blue:   #1E3A5F;
-  --svep-accent: #E8A020;
+  --bg:             #FAFAF8;
+  --surface:        #FFFFFF;
+  --text-primary:   #16191E;
+  --text-secondary: #6E6B65;
+  --text-tertiary:  #9B9892;
+  --border:         #E7E5E0;
+  --accent:         #1C7FBE;
+  --accent-light:   #EBF4FB;
+  --accent-dark:    #155F94;
 }
 
 body {
-  @apply bg-gray-950 text-gray-100 font-sans antialiased;
+  background-color: var(--bg);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
   margin: 0;
 }
 
-#root {
-  min-height: 100vh;
+#root { min-height: 100vh; }
+
+/* Status badges — light theme */
+.status-green  { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
+.status-yellow { background: #FEFCE8; color: #CA8A04; border: 1px solid #FDE68A; }
+.status-red    { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+.status-nodata { background: #F9FAFB; color: #9CA3AF; border: 1px solid #E5E7EB; }
+
+/* Eyebrow label */
+.eyebrow {
+  font-family: ui-monospace, 'Courier New', monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 10px;
+  color: var(--text-tertiary);
 }
 
-.status-green  { @apply bg-green-500/20 text-green-400 border border-green-500/30; }
-.status-yellow { @apply bg-yellow-500/20 text-yellow-400 border border-yellow-500/30; }
-.status-red    { @apply bg-red-500/20 text-red-400 border border-red-500/30; }
-.status-nodata { @apply bg-gray-700/20 text-gray-500 border border-gray-600/30; }
+/* Monospace number */
+.mono-num {
+  font-family: ui-monospace, 'Courier New', monospace;
+  font-weight: 500;
+}
+
+/* BrutalType heading */
+.brutal { font-family: 'BrutalType', sans-serif; }
+
+/* Select / input light style */
+.input-light {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--text-primary);
+  outline: none;
+}
+.input-light:focus { border-color: var(--accent); }
+
+/* Heatmap score cells — light palette */
+.cell-green  { background: #DCFCE7; color: #15803D; }
+.cell-yellow { background: #FEF9C3; color: #A16207; }
+.cell-red    { background: #FEE2E2; color: #B91C1C; }
+.cell-nodata { background: #F3F4F6; color: #9CA3AF; }

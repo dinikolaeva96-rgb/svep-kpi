@@ -49,6 +49,6 @@ export const useAuthStore = create<AuthState>()(
         set({ accessToken: null, refreshTokenVal: null, user: null })
       },
     }),
-    { name: 'svep-auth', partialState: (s) => ({ refreshTokenVal: s.refreshTokenVal }) }
+    { name: 'svep-auth', partialize: (s) => ({ refreshTokenVal: s.refreshTokenVal }) as AuthState }
   )
 )

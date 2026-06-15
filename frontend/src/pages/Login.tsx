@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login as apiLogin } from '@/api'
 import { useAuthStore } from '@/store/auth'
+import LogoMark from '@/assets/logo-mark.svg?react'
 
 export default function Login() {
   const [email, setEmail]       = useState('')
@@ -27,54 +28,66 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-screen bg-svep-bg flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <div className="text-center mb-8">
-          <div className="text-4xl mb-3">⚡</div>
-          <h1 className="text-2xl font-bold text-white">Экосистема СВЭП</h1>
-          <p className="text-gray-400 text-sm mt-1">Вход в систему</p>
+        {/* Logo */}
+        <div className="text-center mb-10">
+          <div className="flex items-center justify-center mb-5">
+            <LogoMark style={{ width: 64, height: 64, color: 'var(--accent)' }} />
+          </div>
+          <h1 className="font-brutal font-black text-3xl tracking-[-0.01em] text-svep-primary">
+            Экосистема <span style={{ color: 'var(--accent)' }}>СВЭП</span>
+          </h1>
+          <p className="eyebrow mt-3">ООО Средневолжскэлектропроект</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-gray-900 border border-gray-800 rounded-2xl p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-svep-surface border border-svep-border rounded-2xl p-6 space-y-4">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-4 py-2">
+            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-2">
               {error}
             </div>
           )}
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Email</label>
+            <label className="block eyebrow mb-2" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 12, color: 'var(--text-secondary)' }}>
+              Email
+            </label>
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
+              className="input-light w-full"
               placeholder="admin@svep.ru"
               required
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-400 mb-1.5">Пароль</label>
+            <label className="block eyebrow mb-2" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 12, color: 'var(--text-secondary)' }}>
+              Пароль
+            </label>
             <input
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
+              className="input-light w-full"
               required
             />
           </div>
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg transition-colors"
+            className="w-full py-2.5 rounded-lg font-medium text-sm text-white disabled:opacity-50 transition-colors"
+            style={{ backgroundColor: 'var(--accent)' }}
+            onMouseOver={e => !loading && (e.currentTarget.style.backgroundColor = 'var(--accent-dark)')}
+            onMouseOut={e => (e.currentTarget.style.backgroundColor = 'var(--accent)')}
           >
             {loading ? 'Вход…' : 'Войти'}
           </button>
         </form>
 
-        <div className="mt-4 text-xs text-gray-600 text-center space-y-1">
-          <p>Демо-учётные данные:</p>
-          <p>admin@svep.ru / Admin123!</p>
-          <p>director@svep.ru / Director1!</p>
+        <div className="mt-4 text-center space-y-1">
+          <p className="eyebrow" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 11 }}>Демо-учётные данные:</p>
+          <p className="mono-num text-xs text-svep-secondary">admin@svep.ru / Admin123!</p>
+          <p className="mono-num text-xs text-svep-tertiary">director@svep.ru / Director1!</p>
         </div>
       </div>
     </div>

@@ -4,11 +4,11 @@ import type { AuditEntry } from '@/types'
 import Skeleton from '@/components/ui/Skeleton'
 
 const ACTION_META: Record<string, { label: string; cls: string }> = {
-  create:         { label: 'Создание',    cls: 'text-green-400 bg-green-500/10 border-green-500/30' },
-  update:         { label: 'Изменение',   cls: 'text-blue-400  bg-blue-500/10  border-blue-500/30'  },
-  delete:         { label: 'Удаление',    cls: 'text-red-400   bg-red-500/10   border-red-500/30'   },
-  reset_password: { label: 'Сброс пароля',cls: 'text-yellow-400 bg-yellow-500/10 border-yellow-500/30' },
-  login:          { label: 'Вход',        cls: 'text-gray-400  bg-gray-700/20  border-gray-600/30'  },
+  create:         { label: 'Создание',    cls: 'text-green-600 bg-green-50 border-green-200' },
+  update:         { label: 'Изменение',   cls: 'text-svep-accent bg-svep-accent-light border-svep-accent/20' },
+  delete:         { label: 'Удаление',    cls: 'text-red-600 bg-red-50 border-red-200' },
+  reset_password: { label: 'Сброс пароля',cls: 'text-amber-600 bg-yellow-50 border-yellow-200' },
+  login:          { label: 'Вход',        cls: 'text-svep-secondary bg-gray-100 border-svep-border' },
 }
 
 const ENTITY_LABEL: Record<string, string> = {
@@ -19,20 +19,20 @@ const ENTITY_LABEL: Record<string, string> = {
 const PAGE_SIZE = 30
 
 function DiffCell({ old: o, nw }: { old: any; nw: any }) {
-  if (!o && !nw) return <span className="text-gray-600">—</span>
+  if (!o && !nw) return <span className="text-svep-tertiary">—</span>
   const keys = [...new Set([...Object.keys(o ?? {}), ...Object.keys(nw ?? {})])]
     .filter(k => !['password_hash','id'].includes(k) && o?.[k] !== nw?.[k])
-  if (!keys.length) return <span className="text-gray-600 text-xs">без изменений</span>
+  if (!keys.length) return <span className="text-svep-tertiary text-xs">без изменений</span>
   return (
     <div className="space-y-0.5">
       {keys.slice(0, 4).map(k => (
         <div key={k} className="flex gap-1.5 text-xs">
-          <span className="text-gray-500">{k}:</span>
-          {o?.[k] !== undefined && <span className="line-through text-red-400/70">{String(o[k])}</span>}
-          {nw?.[k] !== undefined && <span className="text-green-400">{String(nw[k])}</span>}
+          <span className="text-svep-tertiary">{k}:</span>
+          {o?.[k] !== undefined && <span className="line-through text-red-400">{String(o[k])}</span>}
+          {nw?.[k] !== undefined && <span className="text-green-600">{String(nw[k])}</span>}
         </div>
       ))}
-      {keys.length > 4 && <div className="text-gray-600 text-xs">+{keys.length - 4} ещё</div>}
+      {keys.length > 4 && <div className="text-svep-tertiary text-xs">+{keys.length - 4} ещё</div>}
     </div>
   )
 }
@@ -61,21 +61,21 @@ export default function AuditLog() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
         <div>
-          <h2 className="text-xl font-bold text-white">Журнал аудита</h2>
-          <p className="text-gray-500 text-sm mt-0.5">{total} записей</p>
+          <h2 className="text-xl font-bold text-svep-primary">Журнал аудита</h2>
+          <p className="text-svep-tertiary text-sm mt-0.5">{total} записей</p>
         </div>
         <div className="flex gap-2 flex-wrap">
           <select value={entity} onChange={e => setEntity(e.target.value)}
-            className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+            className="input-light">
             <option value="">Все объекты</option>
             {Object.entries(ENTITY_LABEL).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
           <select value={action} onChange={e => setAction(e.target.value)}
-            className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500">
+            className="input-light">
             <option value="">Все действия</option>
             {Object.entries(ACTION_META).map(([v, m]) => <option key={v} value={v}>{m.label}</option>)}
           </select>
-          <button onClick={() => load()} className="text-xs px-3 py-1.5 rounded-lg bg-gray-800 border border-gray-700 text-gray-400 hover:text-white transition-colors">
+          <button onClick={() => load()} className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 border border-svep-border text-svep-secondary hover:text-svep-primary transition-colors">
             ↻ Обновить
           </button>
         </div>
@@ -83,35 +83,35 @@ export default function AuditLog() {
 
       {loading ? (
         <div className="space-y-2">{Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="bg-gray-900 border border-gray-800 rounded-lg p-3"><Skeleton /></div>
+          <div key={i} className="bg-svep-surface border border-svep-border rounded-lg p-3"><Skeleton /></div>
         ))}</div>
       ) : rows.length === 0 ? (
-        <div className="text-center py-16 text-gray-500">
+        <div className="text-center py-16 text-svep-tertiary">
           <div className="text-4xl mb-3">📋</div>
           <div>Записей аудита нет</div>
         </div>
       ) : (
         <>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl overflow-hidden">
+          <div className="bg-svep-surface border border-svep-border rounded-xl overflow-hidden">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-800">
+                <tr className="border-b border-svep-border">
                   {['Дата/время','Пользователь','Действие','Объект','Изменения','IP'].map(h => (
-                    <th key={h} className="text-left py-2.5 px-4 text-gray-500 font-medium text-xs">{h}</th>
+                    <th key={h} className="text-left py-2.5 px-4 text-svep-tertiary font-medium text-xs">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {rows.map(r => {
-                  const am = ACTION_META[r.action] ?? { label: r.action, cls: 'text-gray-400 bg-gray-700/20 border-gray-600/30' }
+                  const am = ACTION_META[r.action] ?? { label: r.action, cls: 'text-svep-secondary bg-gray-100 border-svep-border' }
                   return (
-                    <tr key={r.id} className="border-b border-gray-800/50 hover:bg-gray-800/20">
-                      <td className="py-2.5 px-4 text-gray-500 text-xs whitespace-nowrap">
+                    <tr key={r.id} className="border-b border-svep-border hover:bg-gray-50">
+                      <td className="py-2.5 px-4 text-svep-tertiary text-xs whitespace-nowrap">
                         {new Date(r.created_at).toLocaleString('ru', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' })}
                       </td>
-                      <td className="py-2.5 px-4 text-white text-xs">
+                      <td className="py-2.5 px-4 text-svep-primary text-xs">
                         <div>{r.user_name}</div>
-                        {r.user_id && <div className="text-gray-600">#{r.user_id}</div>}
+                        {r.user_id && <div className="text-svep-tertiary">#{r.user_id}</div>}
                       </td>
                       <td className="py-2.5 px-4">
                         <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${am.cls}`}>
@@ -119,13 +119,13 @@ export default function AuditLog() {
                         </span>
                       </td>
                       <td className="py-2.5 px-4 text-xs">
-                        <div className="text-gray-300">{ENTITY_LABEL[r.entity] ?? r.entity}</div>
-                        {r.entity_id && <div className="text-gray-600">#{r.entity_id}</div>}
+                        <div className="text-svep-primary">{ENTITY_LABEL[r.entity] ?? r.entity}</div>
+                        {r.entity_id && <div className="text-svep-tertiary">#{r.entity_id}</div>}
                       </td>
                       <td className="py-2.5 px-4 max-w-[240px]">
                         <DiffCell old={r.old_value} nw={r.new_value} />
                       </td>
-                      <td className="py-2.5 px-4 text-gray-600 text-xs">{r.ip ?? '—'}</td>
+                      <td className="py-2.5 px-4 text-svep-tertiary text-xs">{r.ip ?? '—'}</td>
                     </tr>
                   )
                 })}
@@ -137,12 +137,12 @@ export default function AuditLog() {
           {pages > 1 && (
             <div className="flex items-center justify-center gap-2 mt-4">
               <button disabled={page === 0} onClick={() => setPage(p => p - 1)}
-                className="px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white disabled:opacity-40 text-sm">
+                className="px-3 py-1.5 rounded-lg bg-gray-100 text-svep-secondary hover:text-svep-primary disabled:opacity-40 text-sm">
                 ← Пред.
               </button>
-              <span className="text-gray-500 text-sm">{page + 1} / {pages}</span>
+              <span className="text-svep-secondary text-sm">{page + 1} / {pages}</span>
               <button disabled={page >= pages - 1} onClick={() => setPage(p => p + 1)}
-                className="px-3 py-1.5 rounded-lg bg-gray-800 text-gray-400 hover:text-white disabled:opacity-40 text-sm">
+                className="px-3 py-1.5 rounded-lg bg-gray-100 text-svep-secondary hover:text-svep-primary disabled:opacity-40 text-sm">
                 След. →
               </button>
             </div>

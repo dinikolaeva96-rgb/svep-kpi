@@ -19,10 +19,10 @@ export default function ProfilePage() {
 
   if (!user) {
     return (
-      <div className="pt-32 text-center text-gray-500">
+      <div className="pt-32 text-center text-svep-secondary">
         <div className="text-4xl mb-4">🔒</div>
-        <div className="text-lg text-white mb-2">Вы не авторизованы</div>
-        <Link to="/login" className="text-blue-400 hover:text-blue-300">Войти →</Link>
+        <div className="text-lg text-svep-primary mb-2">Вы не авторизованы</div>
+        <Link to="/login" className="text-svep-accent hover:underline">Войти →</Link>
       </div>
     )
   }
@@ -50,20 +50,21 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="pt-20 px-4 max-w-2xl mx-auto pb-12">
+    <div className="pt-20 px-4 max-w-2xl mx-auto pb-12 bg-svep-bg min-h-screen">
       <div className="py-6">
-        <h1 className="text-2xl font-bold text-white">Профиль</h1>
+        <h1 className="font-brutal font-black text-2xl text-svep-primary">Профиль</h1>
       </div>
 
       {/* Карточка пользователя */}
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
+      <div className="bg-svep-surface border border-svep-border rounded-2xl p-6 mb-6">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-14 h-14 rounded-full bg-blue-700 flex items-center justify-center text-2xl font-bold text-white">
+          <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl font-bold text-white"
+            style={{ backgroundColor: 'var(--accent)' }}>
             {user.name[0].toUpperCase()}
           </div>
           <div>
-            <div className="text-xl font-bold text-white">{user.name}</div>
-            <div className="text-gray-400 text-sm">{user.email}</div>
+            <div className="text-xl font-bold text-svep-primary">{user.name}</div>
+            <div className="text-svep-secondary text-sm">{user.email}</div>
           </div>
         </div>
 
@@ -74,23 +75,23 @@ export default function ProfilePage() {
             { label: 'Отдел',  value: user.dept_id ? `ID ${user.dept_id}` : 'Все отделы' },
             { label: 'Доступ', value: user.role === 'admin' ? 'Полный' : user.role === 'management' ? 'Просмотр все' : 'Свой отдел' },
           ].map(f => (
-            <div key={f.label} className="bg-gray-800/50 rounded-xl p-3">
-              <div className="text-xs text-gray-500 mb-0.5">{f.label}</div>
-              <div className="text-white font-medium">{f.value}</div>
+            <div key={f.label} className="bg-svep-bg rounded-xl p-3">
+              <div className="eyebrow mb-0.5">{f.label}</div>
+              <div className="text-svep-primary font-medium">{f.value}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Смена пароля */}
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
-        <h2 className="text-lg font-semibold text-white mb-4">Изменить пароль</h2>
+      <div className="bg-svep-surface border border-svep-border rounded-2xl p-6 mb-6">
+        <h2 className="text-lg font-semibold text-svep-primary mb-4">Изменить пароль</h2>
         <form onSubmit={handleChangePassword} className="space-y-3">
           {msg && (
             <div className={`text-sm rounded-lg px-4 py-2.5 ${
               msg.type === 'ok'
-                ? 'bg-green-500/10 border border-green-500/30 text-green-400'
-                : 'bg-red-500/10 border border-red-500/30 text-red-400'
+                ? 'bg-green-50 border border-green-200 text-green-700'
+                : 'bg-red-50 border border-red-200 text-red-700'
             }`}>
               {msg.text}
             </div>
@@ -101,12 +102,12 @@ export default function ProfilePage() {
             { key: 'new2', label: 'Повторите новый',  field: 'new2' },
           ].map(f => (
             <div key={f.key}>
-              <label className="block text-xs text-gray-400 mb-1.5">{f.label}</label>
+              <label className="block text-xs text-svep-secondary mb-1.5">{f.label}</label>
               <input
                 type="password"
                 value={pwForm[f.field as keyof typeof pwForm]}
                 onChange={e => setPwForm(p => ({ ...p, [f.field]: e.target.value }))}
-                className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
+                className="input-light w-full"
                 required
               />
             </div>
@@ -114,7 +115,8 @@ export default function ProfilePage() {
           <button
             type="submit"
             disabled={saving}
-            className="w-full bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white font-medium py-2.5 rounded-lg transition-colors"
+            className="w-full text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50"
+            style={{ backgroundColor: 'var(--accent)' }}
           >
             {saving ? 'Сохранение…' : 'Сменить пароль'}
           </button>
@@ -122,12 +124,12 @@ export default function ProfilePage() {
       </div>
 
       {/* Выход */}
-      <div className="bg-gray-900 border border-red-900/40 rounded-2xl p-6">
-        <h2 className="text-lg font-semibold text-white mb-2">Сессия</h2>
-        <p className="text-gray-400 text-sm mb-4">Выйти из всех устройств</p>
+      <div className="bg-svep-surface border border-red-100 rounded-2xl p-6">
+        <h2 className="text-lg font-semibold text-svep-primary mb-2">Сессия</h2>
+        <p className="text-svep-secondary text-sm mb-4">Выйти из всех устройств</p>
         <button
           onClick={() => { logout(); navigate('/') }}
-          className="bg-red-600/20 hover:bg-red-600/40 border border-red-600/40 text-red-400 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+          className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 text-sm font-medium px-4 py-2 rounded-lg transition-colors"
         >
           Выйти из системы
         </button>

@@ -5,15 +5,19 @@ export default {
     extend: {
       colors: {
         svep: {
-          blue:   '#1E3A5F',
-          accent: '#E8A020',
-          green:  '#22C55E',
-          yellow: '#EAB308',
-          red:    '#EF4444',
+          bg:        '#FAFAF8',
+          surface:   '#FFFFFF',
+          primary:   '#16191E',
+          secondary: '#6E6B65',
+          tertiary:  '#9B9892',
+          border:    '#E7E5E0',
+          accent:    '#1C7FBE',
+          'accent-light': '#EBF4FB',
         },
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans:   ['Inter', 'system-ui', 'sans-serif'],
+        brutal: ['BrutalType', 'sans-serif'],
       },
     },
   },

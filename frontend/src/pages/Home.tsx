@@ -2,16 +2,14 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getMaster, getCompanyTrends, getAlerts } from '@/api'
 import type { MasterResponse, TrendPoint, AlertsResponse } from '@/types'
-import AlertBanner from '@/components/ui/AlertBanner'
-import Sparkline   from '@/components/charts/Sparkline'
 
 const DOMAIN_META = [
-  { code: 'quality',    icon: '🏆', label: 'Качество' },
-  { code: 'delivery',   icon: '⏱️', label: 'Сроки' },
-  { code: 'cost',       icon: '💰', label: 'Затраты' },
-  { code: 'safety',     icon: '🛡️', label: 'Безопасность' },
-  { code: 'morale',     icon: '❤️', label: 'Вовлечённость' },
-  { code: 'innovation', icon: '💡', label: 'Инновации' },
+  { code: 'quality',    icon: '🏆', label: 'Качество',     desc: 'Доля проектов без замечаний' },
+  { code: 'delivery',   icon: '⏱️', label: 'Сроки',        desc: 'Соблюдение планов-графиков' },
+  { code: 'cost',       icon: '💰', label: 'Затраты',       desc: 'Контроль бюджетных отклонений' },
+  { code: 'safety',     icon: '🛡️', label: 'Безопасность', desc: 'Инциденты и нарушения' },
+  { code: 'morale',     icon: '❤️', label: 'Вовлечённость', desc: 'Индекс удовлетворённости' },
+  { code: 'innovation', icon: '💡', label: 'Инновации',    desc: 'Кайдзен-предложения' },
 ]
 
 export default function Home() {
@@ -28,20 +26,16 @@ export default function Home() {
     ]).finally(() => setLoading(false))
   }, [])
 
-  const totalDepts = master?.departments.length ?? 0
-
   const avgScore = master
-    ? Math.round(
-        master.departments.map(d => d.overall_score ?? 0).reduce((a, b) => a + b, 0) / (master.departments.length || 1)
-      )
+    ? Math.round(master.departments.map(d => d.overall_score ?? 0).reduce((a, b) => a + b, 0) / (master.departments.length || 1))
     : null
 
-  // Тренд: сравниваем последние два периода
   const trendDir = trends.length >= 2
     ? ((trends[trends.length - 1].score ?? 0) - (trends[trends.length - 2].score ?? 0))
     : 0
-  const trendIcon  = trendDir > 0 ? '↑' : trendDir < 0 ? '↓' : '→'
-  const trendColor = trendDir > 0 ? 'text-green-400' : trendDir < 0 ? 'text-red-400' : 'text-gray-500'
+  const trendIcon = trendDir > 0 ? '↑' : trendDir < 0 ? '↓' : '→'
+
+  const alertCount = alerts ? alerts.summary.red + alerts.summary.yellow : null
 
   const domainAvgs = master
     ? DOMAIN_META.map(dm => {
@@ -52,137 +46,185 @@ export default function Home() {
       })
     : DOMAIN_META.map(dm => ({ ...dm, avg: null }))
 
-  const sparkData = trends.map(t => ({ value: t.score }))
-
   return (
-    <div className="pt-20 px-4 max-w-screen-xl mx-auto">
-      <AlertBanner />
-
+    <div className="pt-14 bg-svep-bg min-h-screen">
       {/* Hero */}
-      <section className="py-10 text-center">
-        <div className="inline-flex items-center gap-2 bg-blue-900/30 border border-blue-700/40 rounded-full px-4 py-1.5 text-blue-300 text-sm mb-6">
-          <span>⚡</span> ООО «Средневолжскэлектропроект» · Казань
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-3">
-          Экосистема <span className="text-amber-400">СВЭП</span>
-        </h1>
-        <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-8">
-          KPI-портал для {totalDepts} отделов, {106} сотрудников.&nbsp;
-          Проектирование электросетей 0.4–220 кВ.
-        </p>
+      <section className="max-w-screen-xl mx-auto px-6 py-16 md:py-20">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          {/* Left */}
+          <div>
+            <p className="eyebrow mb-5">ООО Средневолжскэлектропроект · Казань</p>
+            <h1 className="font-brutal font-black text-[42px] leading-[1.05] tracking-[-0.01em] text-svep-primary mb-5">
+              Экосистема<br/>
+              <span style={{ color: 'var(--accent)' }}>СВЭП</span>
+            </h1>
+            <p className="text-svep-secondary text-base leading-relaxed max-w-md mb-10">
+              KPI-портал для 16 отделов и 106 сотрудников. Проектирование электросетей 0.4–220 кВ.
+            </p>
 
-        {/* Hero metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto mb-4">
-          {[
-            { label: 'Отделов',         value: '16' },
-            { label: 'Сотрудников',     value: '106' },
-            {
-              label: 'Средний KPI',
-              value: avgScore !== null ? `${avgScore}%` : '…',
-              extra: trendIcon,
-              extraCls: trendColor,
-            },
-            {
-              label: 'Алертов',
-              value: alerts ? String(alerts.summary.red + alerts.summary.yellow) : '…',
-              extraCls: (alerts?.summary.red ?? 0) > 0 ? 'text-red-400' : 'text-yellow-400',
-            },
-          ].map(m => (
-            <div key={m.label} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-              <div className="flex items-baseline justify-center gap-1.5">
-                <div className="text-2xl font-bold text-white">{m.value}</div>
-                {m.extra && <span className={`text-base font-bold ${m.extraCls}`}>{m.extra}</span>}
-              </div>
-              <div className="text-xs text-gray-500 mt-1">{m.label}</div>
+            {/* 4 Stats */}
+            <div className="grid grid-cols-4 gap-0">
+              {[
+                { value: '16',    label: 'Отделов' },
+                { value: '106',   label: 'Сотрудников' },
+                { value: avgScore !== null ? `${avgScore}%` : '…', label: 'Средний KPI', extra: trendDir !== 0 ? trendIcon : undefined, extraColor: trendDir > 0 ? '#16A34A' : '#DC2626' },
+                { value: alertCount !== null ? String(alertCount) : '…', label: 'Алертов', valueColor: (alertCount ?? 0) > 0 ? '#DC2626' : '#16A34A' },
+              ].map((s, i) => (
+                <div key={i} className="pt-4 pr-4" style={{ borderTop: '1px solid var(--border)' }}>
+                  <div className="flex items-baseline gap-1">
+                    <span className="mono-num text-[22px] font-medium text-svep-primary" style={s.valueColor ? { color: s.valueColor } : {}}>
+                      {s.value}
+                    </span>
+                    {s.extra && (
+                      <span className="text-sm" style={{ color: s.extraColor }}>{s.extra}</span>
+                    )}
+                  </div>
+                  <p className="eyebrow mt-1">{s.label}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-
-        {/* Спарклайн тренда */}
-        {sparkData.length > 1 && (
-          <div className="max-w-2xl mx-auto mb-8 px-4">
-            <div className="text-xs text-gray-600 mb-1 text-left">Тренд KPI (последние {sparkData.length} месяцев)</div>
-            <Sparkline data={sparkData} height={48} color={trendDir >= 0 ? '#22C55E' : '#EF4444'} />
           </div>
-        )}
+
+          {/* Right — decorative crystal */}
+          <div className="hidden md:flex items-center justify-center">
+            <div className="relative" style={{ width: 280, height: 280 }}>
+              {/* Background glow */}
+              <div className="absolute inset-0 rounded-full" style={{ background: 'radial-gradient(circle, var(--accent-light) 0%, transparent 70%)' }} />
+              <svg viewBox="0 0 40 52" fill="none" xmlns="http://www.w3.org/2000/svg"
+                style={{ width: '100%', height: '100%', color: 'var(--border)' }}>
+                <path d="M20 2 L38 15 L38 37 L20 50 L2 37 L2 15 Z" stroke="currentColor" strokeWidth="0.6" strokeLinejoin="round"/>
+                <line x1="20" y1="2" x2="2" y2="26" stroke="currentColor" strokeWidth="0.4"/>
+                <line x1="20" y1="2" x2="38" y2="26" stroke="currentColor" strokeWidth="0.4"/>
+                <line x1="20" y1="2" x2="20" y2="26" stroke="currentColor" strokeWidth="0.4"/>
+                <line x1="2" y1="26" x2="20" y2="50" stroke="currentColor" strokeWidth="0.4"/>
+                <line x1="38" y1="26" x2="20" y2="50" stroke="currentColor" strokeWidth="0.4"/>
+                <line x1="20" y1="26" x2="20" y2="50" stroke="currentColor" strokeWidth="0.4"/>
+                <line x1="2" y1="15" x2="38" y2="26" stroke="currentColor" strokeWidth="0.3"/>
+                <line x1="38" y1="15" x2="2" y2="26" stroke="currentColor" strokeWidth="0.3"/>
+                <line x1="2" y1="37" x2="38" y2="26" stroke="currentColor" strokeWidth="0.3"/>
+                <line x1="38" y1="37" x2="2" y2="26" stroke="currentColor" strokeWidth="0.3"/>
+                {/* Accent girdle line */}
+                <line x1="2" y1="26" x2="38" y2="26" stroke="var(--accent)" strokeWidth="0.8"/>
+              </svg>
+            </div>
+          </div>
+        </div>
       </section>
 
-      {/* 6 доменов */}
-      <section className="mb-12">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-200">6 lean-доменов</h2>
-          <Link to="/master" className="text-sm text-blue-400 hover:text-blue-300">Мастер-карта →</Link>
+      {/* 6 Domains — numbered list */}
+      <section className="max-w-screen-xl mx-auto px-6 pb-12">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="font-brutal font-black text-2xl tracking-[-0.01em] text-svep-primary">
+            6 lean-доменов
+          </h2>
+          <Link to="/master" className="eyebrow text-svep-accent hover:underline">
+            Мастер-карта →
+          </Link>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {domainAvgs.map(d => (
+
+        <div className="divide-y divide-svep-border">
+          {domainAvgs.map((d, i) => (
             <Link
               key={d.code}
               to={`/domain/${d.code}`}
-              className="group bg-gray-900 border border-gray-800 hover:border-gray-600 rounded-xl p-5 text-center transition-all hover:-translate-y-1"
+              className="group flex items-center gap-5 py-4 hover:bg-gray-50 transition-colors px-2 -mx-2 rounded-lg"
             >
-              <div className="text-3xl mb-3">{d.icon}</div>
-              <div className="text-sm font-medium text-gray-300 group-hover:text-white">{d.label}</div>
-              {d.avg !== null ? (
-                <div className={`text-lg font-bold mt-2 ${d.avg >= 80 ? 'text-green-400' : d.avg >= 60 ? 'text-yellow-400' : 'text-red-400'}`}>
-                  {d.avg}%
+              {/* Number */}
+              <span className="mono-num text-svep-tertiary w-7 text-sm shrink-0">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+
+              {/* Icon box */}
+              <div className={`w-9 h-9 flex items-center justify-center rounded border shrink-0 text-lg ${
+                d.code === 'innovation'
+                  ? 'border-svep-accent text-svep-accent'
+                  : 'border-svep-border text-svep-secondary'
+              }`}>
+                {d.icon}
+              </div>
+
+              {/* Label + desc */}
+              <div className="flex-1 min-w-0">
+                <div className="text-svep-primary font-medium text-sm group-hover:text-svep-accent transition-colors">
+                  {d.label}
                 </div>
+                <div className="eyebrow mt-0.5 normal-case tracking-normal text-svep-tertiary" style={{ textTransform: 'none', letterSpacing: 0 }}>
+                  {d.desc}
+                </div>
+              </div>
+
+              {/* Score */}
+              {d.avg !== null ? (
+                <span className={`mono-num text-sm font-medium shrink-0 ${
+                  d.avg >= 80 ? 'text-green-600' : d.avg >= 60 ? 'text-amber-600' : 'text-red-600'
+                }`}>
+                  {d.avg}%
+                </span>
               ) : (
-                <div className="text-gray-600 mt-2">—</div>
+                <span className="text-svep-tertiary text-sm shrink-0">—</span>
               )}
+
+              {/* Arrow */}
+              <span className="text-svep-tertiary group-hover:text-svep-accent transition-colors text-sm shrink-0">→</span>
             </Link>
           ))}
         </div>
       </section>
 
-      {/* Быстрые действия */}
-      <section className="mb-12 grid sm:grid-cols-3 gap-4">
-        <Link to="/alerts" className="group bg-red-900/20 border border-red-800/40 hover:border-red-600/60 rounded-xl p-5 transition-all">
-          <div className="text-2xl mb-2">🚨</div>
-          <div className="font-semibold text-white group-hover:text-red-300">Алерты</div>
-          <div className="text-sm text-gray-500 mt-1">
-            {alerts ? `${alerts.summary.red + alerts.summary.yellow} показателей вне нормы` : 'Загрузка…'}
+      {/* Quick actions */}
+      <section className="max-w-screen-xl mx-auto px-6 pb-12 grid sm:grid-cols-3 gap-4">
+        <Link to="/alerts"
+          className="group bg-svep-surface border border-svep-border hover:border-red-200 rounded-xl p-5 transition-all">
+          <div className="text-xl mb-2">🚨</div>
+          <div className="font-medium text-svep-primary group-hover:text-red-600">Алерты</div>
+          <div className="text-sm text-svep-secondary mt-1">
+            {alerts ? `${alerts.summary.red + alerts.summary.yellow} показателей вне нормы` : '…'}
           </div>
         </Link>
-        <Link to="/kaizen" className="group bg-blue-900/20 border border-blue-800/40 hover:border-blue-600/60 rounded-xl p-5 transition-all">
-          <div className="text-2xl mb-2">💡</div>
-          <div className="font-semibold text-white group-hover:text-blue-300">Кайдзен</div>
-          <div className="text-sm text-gray-500 mt-1">Предложения по улучшению</div>
+        <Link to="/kaizen"
+          className="group bg-svep-surface border border-svep-border hover:border-svep-accent/40 rounded-xl p-5 transition-all">
+          <div className="text-xl mb-2">💡</div>
+          <div className="font-medium text-svep-primary group-hover:text-svep-accent">Кайдзен</div>
+          <div className="text-sm text-svep-secondary mt-1">Предложения по улучшению</div>
         </Link>
-        <Link to="/dashboard" className="group bg-purple-900/20 border border-purple-800/40 hover:border-purple-600/60 rounded-xl p-5 transition-all">
-          <div className="text-2xl mb-2">📺</div>
-          <div className="font-semibold text-white group-hover:text-purple-300">TV-дашборд</div>
-          <div className="text-sm text-gray-500 mt-1">Публичный экран с авто-ротацией</div>
+        <Link to="/dashboard"
+          className="group bg-svep-surface border border-svep-border hover:border-svep-accent/40 rounded-xl p-5 transition-all">
+          <div className="text-xl mb-2">📺</div>
+          <div className="font-medium text-svep-primary group-hover:text-svep-accent">TV-дашборд</div>
+          <div className="text-sm text-svep-secondary mt-1">Публичный экран</div>
         </Link>
       </section>
 
-      {/* Отделы */}
-      <section className="mb-16">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold text-gray-200">Отделы</h2>
-        </div>
+      {/* Departments */}
+      <section className="max-w-screen-xl mx-auto px-6 pb-16">
+        <h2 className="font-brutal font-black text-2xl tracking-[-0.01em] text-svep-primary mb-5">Отделы</h2>
         {loading ? (
-          <div className="text-gray-500 text-center py-12">Загрузка…</div>
+          <div className="text-svep-tertiary text-center py-12">Загрузка…</div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
             {master?.departments.map(dept => {
               const score = dept.overall_score
-              const color = score === null ? 'text-gray-500'
-                : score >= 80 ? 'text-green-400'
-                : score >= 60 ? 'text-yellow-400'
-                : 'text-red-400'
+              const scoreColor = score === null ? 'text-svep-tertiary'
+                : score >= 80 ? 'text-green-600'
+                : score >= 60 ? 'text-amber-600'
+                : 'text-red-600'
               const hasAlert = alerts?.alerts.some(a => a.dept_id === dept.id)
               return (
                 <Link
                   key={dept.id}
                   to={`/dept/${dept.id}`}
-                  className="bg-gray-900 border border-gray-800 hover:border-gray-600 rounded-xl p-4 text-center transition-all hover:-translate-y-1 group relative"
+                  className="bg-svep-surface border border-svep-border hover:border-svep-accent/50 rounded-xl p-4 text-center transition-all hover:-translate-y-0.5 group relative"
                 >
                   {hasAlert && (
-                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full" title="Есть алерты" />
+                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full" />
                   )}
-                  <div className="text-base font-bold text-white group-hover:text-amber-400">{dept.name_short}</div>
-                  <div className="text-xs text-gray-500 mt-1">{dept.staff_count} чел.</div>
-                  <div className={`text-sm font-semibold mt-2 ${color}`}>
+                  <div className="text-sm font-bold text-svep-primary group-hover:text-svep-accent transition-colors">
+                    {dept.name_short}
+                  </div>
+                  <div className="eyebrow mt-1" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 11 }}>
+                    {dept.staff_count} чел.
+                  </div>
+                  <div className={`mono-num text-sm font-medium mt-2 ${scoreColor}`}>
                     {score !== null ? `${score}%` : '—'}
                   </div>
                 </Link>
