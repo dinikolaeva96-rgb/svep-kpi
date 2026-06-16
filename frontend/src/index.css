@@ -1,55 +1,32 @@
-@font-face {
-  font-family: 'BrutalType';
-  src: url('./assets/fonts/BrutalType.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'BrutalType';
-  src: url('./assets/fonts/BrutalTypeExtraBold.otf') format('opentype');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'BrutalType';
-  src: url('./assets/fonts/BrutalTypeBlack.otf') format('opentype');
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg:               #F5F6F8;
+  --accent:            #2196C9;
+  --accent-hover:      #2DA8DC;
+  --night:             #0D1B2A;
+  --slate:             #112233;
+  --mist:              #F2F4F7;
+  --bg:                #F2F4F7;
   --surface:           #FFFFFF;
-  --border:            #E8EAF0;
-  --accent:            #185FA5;
-  --accent-hover:      #1A6FBF;
-  --accent-deep:       #0C447C;
-  --accent-deep-text:  #B5D4F4;
-  --text-primary:      #0A1628;
+  --border:            #E2E8F0;
+  --text-primary:      #0D1B2A;
   --text-secondary:    #4A5568;
-  --text-tertiary:     #718096;
-  --badge-bg:          #EBF3FB;
-  --badge-text:        #0A1628;
-  --success-bg:        #E6F7F0;
-  --success-text:      #065F46;
-  --progress-design:   #185FA5;
-  --progress-survey:   #1D9E75;
-  --progress-expert:   #D85A30;
+  --text-tertiary:     #8FA3B8;
+  --badge-bg:          #E8F3FA;
+  --badge-text:        #0D1B2A;
+  --success-bg:        #E8F8EE;
+  --success-text:      #1E7E45;
+  --ok:                #27AE60;
+  --alert:             #F2994A;
+  --critical:          #EB5757;
 
   /* Dark navbar / hero / login surfaces */
-  --navy:              #0A1628;
-  --navy-surface:      #0F1F3D;
-  --navy-input:        #1A2F52;
-  --navy-border:       rgba(255,255,255,0.08);
+  --navy:              #0D1B2A;
+  --navy-surface:      #112233;
+  --navy-input:        #1A2F45;
+  --navy-border:       #1E3248;
   --navy-border-strong: rgba(255,255,255,0.15);
 }
 
@@ -64,28 +41,29 @@ body {
 #root { min-height: 100vh; }
 
 /* Status badges — light theme */
-.status-green  { background: #F0FDF4; color: #16A34A; border: 1px solid #BBF7D0; }
-.status-yellow { background: #FEFCE8; color: #CA8A04; border: 1px solid #FDE68A; }
-.status-red    { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+.status-green  { background: #E8F8EE; color: #1E7E45; border: 1px solid #BBF7D0; }
+.status-yellow { background: #FEF3E8; color: #B9650F; border: 1px solid #FCD9AD; }
+.status-red    { background: #FCEAEA; color: #C53C3C; border: 1px solid #F8C5C5; }
 .status-nodata { background: #F9FAFB; color: #9CA3AF; border: 1px solid #E5E7EB; }
 
 /* Eyebrow label */
 .eyebrow {
-  font-family: ui-monospace, 'Courier New', monospace;
+  font-family: 'Inter', sans-serif;
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 10px;
-  color: var(--text-tertiary);
+  letter-spacing: 0.15em;
+  font-weight: 500;
+  font-size: 11px;
+  color: var(--accent);
 }
 
 /* Monospace number */
 .mono-num {
-  font-family: ui-monospace, 'Courier New', monospace;
-  font-weight: 500;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-weight: 600;
 }
 
-/* BrutalType heading */
-.brutal { font-family: 'BrutalType', sans-serif; }
+/* Display heading */
+.brutal { font-family: 'Exo 2', 'Inter', sans-serif; }
 
 /* Badges */
 .badge-blue    { background: var(--badge-bg); color: var(--badge-text); }
@@ -94,15 +72,15 @@ body {
 /* Card */
 .card-light {
   background: var(--surface);
-  border: 0.5px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: 12px;
 }
 
 /* Select / input light style */
 .input-light {
   background: var(--surface);
-  border: 0.5px solid var(--border);
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
   padding: 6px 12px;
   font-size: 13px;
   color: var(--text-primary);
@@ -114,7 +92,7 @@ body {
 .input-navy {
   background: var(--navy-input);
   border: 1px solid var(--navy-border-strong);
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 10px 14px;
   font-size: 14px;
   color: #FFFFFF;
@@ -124,7 +102,19 @@ body {
 .input-navy:focus { border-color: var(--accent); }
 
 /* Heatmap score cells — light palette */
-.cell-green  { background: #DCFCE7; color: #15803D; }
-.cell-yellow { background: #FEF9C3; color: #A16207; }
-.cell-red    { background: #FEE2E2; color: #B91C1C; }
+.cell-green  { background: #E8F8EE; color: #1E7E45; }
+.cell-yellow { background: #FEF3E8; color: #B9650F; }
+.cell-red    { background: #FCEAEA; color: #C53C3C; }
 .cell-nodata { background: #F3F4F6; color: #9CA3AF; }
+
+/* Signature crystal rotation — Hero decorative element */
+@keyframes crystal-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.crystal-spin {
+  animation: crystal-spin 40s linear infinite;
+}
+.crystal-spin:hover {
+  animation-play-state: paused;
+}

@@ -23,10 +23,11 @@ export default function Navbar() {
       style={{ background: 'var(--navy)', borderBottom: '1px solid var(--navy-border)', height: 64 }}
     >
       <div className="max-w-screen-xl mx-auto px-6 h-full flex items-center gap-5">
-        {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 shrink-0 text-white hover:opacity-90 transition-opacity">
-          <GeometricMotif variant="header" />
-          <span className="font-brutal font-black tracking-[.18em]" style={{ fontSize: 14, letterSpacing: '0.02em' }}>СВЭП</span>
+        {/* Logo — symbol + abbreviation, divider line, like LOGO-without_descriptor */}
+        <Link to="/" className="flex items-center gap-3 shrink-0 text-white hover:opacity-90 transition-opacity">
+          <GeometricMotif variant="header" className="text-svep-accent" />
+          <span style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.2)' }} />
+          <span className="font-display font-bold tracking-[.1em]" style={{ fontSize: 15 }}>СВЭП</span>
         </Link>
 
         {/* Nav links */}
@@ -37,21 +38,26 @@ export default function Navbar() {
               to={l.to}
               end={l.to === '/'}
               className={({ isActive }) =>
-                `px-3 py-1 font-medium whitespace-nowrap relative transition-all ${
+                `px-3 py-1 font-medium whitespace-nowrap relative transition-colors flex items-center gap-1.5 ${
                   isActive
                     ? 'text-white after:absolute after:bottom-0 after:left-3 after:right-3 after:h-[2px] after:bg-svep-accent'
-                    : 'text-white/85 hover:text-white after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-svep-accent after:opacity-0 hover:after:opacity-100'
+                    : 'text-[#8FA3B8] hover:text-white after:absolute after:bottom-0 after:left-3 after:right-3 after:h-[2px] after:bg-svep-accent after:opacity-0 hover:after:opacity-100 after:transition-opacity'
                 }`
               }
-              style={{ fontFamily: "'BrutalType', sans-serif", fontSize: 14, letterSpacing: '0.02em' }}
+              style={{ fontFamily: "'Inter', sans-serif", fontSize: 14 }}
             >
-              {l.label}
+              {({ isActive }) => (
+                <>
+                  {isActive && <GeometricMotif variant="header" className="text-svep-accent !w-3.5 !h-[18px]" />}
+                  {l.label}
+                </>
+              )}
             </NavLink>
           ))}
         </div>
 
         {/* Auth */}
-        <div className="shrink-0 flex items-center gap-2">
+        <div className="shrink-0 flex items-center gap-3">
           {user ? (
             <>
               {roleLevel >= 1 && (
@@ -60,22 +66,17 @@ export default function Navbar() {
                     `text-xs px-2.5 py-1 rounded-[6px] border transition-colors ${
                       isActive
                         ? 'bg-svep-accent text-white border-svep-accent'
-                        : 'text-white/85 border-white/15 hover:border-svep-accent hover:text-white'
+                        : 'text-[#8FA3B8] border-white/15 hover:border-svep-accent hover:text-white'
                     }`
                   }>
                   Админ
                 </NavLink>
               )}
-              <span className="text-xs text-white/65 hidden lg:block truncate max-w-[100px]">
-                {user.name.split(' ')[0]}
-              </span>
-              <span
-                className="text-xs px-2.5 py-1 rounded-[6px] text-white font-medium"
-                style={{ background: 'var(--accent)' }}
-              >
-                {user.role}
-              </span>
-              <button onClick={logout} className="text-white/60 hover:text-red-400 transition-colors text-xs">
+              <div className="hidden lg:flex flex-col items-end leading-tight">
+                <span className="text-white font-semibold text-sm">{user.name.split(' ')[0]}</span>
+                <span className="text-[#8FA3B8] text-xs">{user.role}</span>
+              </div>
+              <button onClick={logout} className="text-[#8FA3B8] hover:text-[#EB5757] transition-colors text-base px-1">
                 ✕
               </button>
             </>
