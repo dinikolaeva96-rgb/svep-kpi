@@ -18,12 +18,15 @@ export default function Navbar() {
   const roleLevel = user ? (ROLE_LEVELS[user.role] ?? 0) : 0
 
   return (
-    <nav className="fixed top-0 inset-x-0 z-50 bg-svep-surface/95 backdrop-blur border-b border-svep-border">
-      <div className="max-w-screen-xl mx-auto px-6 h-14 flex items-center gap-5">
+    <nav
+      className="fixed top-0 inset-x-0 z-50"
+      style={{ background: 'var(--navy)', borderBottom: '1px solid var(--navy-border)', height: 64 }}
+    >
+      <div className="max-w-screen-xl mx-auto px-6 h-full flex items-center gap-5">
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-2.5 shrink-0 text-svep-primary hover:text-svep-accent transition-colors">
+        <Link to="/" className="flex items-center gap-2.5 shrink-0 text-white hover:opacity-90 transition-opacity">
           <GeometricMotif variant="header" />
-          <span className="font-brutal font-black tracking-[.18em] text-sm">СВЭП</span>
+          <span className="font-brutal font-black tracking-[.18em]" style={{ fontSize: 14, letterSpacing: '0.02em' }}>СВЭП</span>
         </Link>
 
         {/* Nav links */}
@@ -34,12 +37,13 @@ export default function Navbar() {
               to={l.to}
               end={l.to === '/'}
               className={({ isActive }) =>
-                `px-3 py-1 text-xs uppercase tracking-[.12em] font-medium transition-colors whitespace-nowrap relative ${
+                `px-3 py-1 font-medium whitespace-nowrap relative transition-all ${
                   isActive
-                    ? 'text-svep-accent after:absolute after:bottom-0 after:left-3 after:right-3 after:h-[1px] after:bg-svep-accent'
-                    : 'text-svep-secondary hover:text-svep-primary'
+                    ? 'text-white after:absolute after:bottom-0 after:left-3 after:right-3 after:h-[2px] after:bg-svep-accent'
+                    : 'text-white/85 hover:text-white after:absolute after:bottom-0 after:left-3 after:right-3 after:h-px after:bg-svep-accent after:opacity-0 hover:after:opacity-100'
                 }`
               }
+              style={{ fontFamily: "'BrutalType', sans-serif", fontSize: 14, letterSpacing: '0.02em' }}
             >
               {l.label}
             </NavLink>
@@ -53,28 +57,32 @@ export default function Navbar() {
               {roleLevel >= 1 && (
                 <NavLink to="/admin"
                   className={({ isActive }) =>
-                    `text-xs px-2.5 py-1 rounded border transition-colors ${
+                    `text-xs px-2.5 py-1 rounded-[6px] border transition-colors ${
                       isActive
                         ? 'bg-svep-accent text-white border-svep-accent'
-                        : 'text-svep-secondary border-svep-border hover:border-svep-accent hover:text-svep-accent'
+                        : 'text-white/85 border-white/15 hover:border-svep-accent hover:text-white'
                     }`
                   }>
                   Админ
                 </NavLink>
               )}
-              <span className="text-xs text-svep-secondary hidden lg:block truncate max-w-[100px]">
+              <span className="text-xs text-white/65 hidden lg:block truncate max-w-[100px]">
                 {user.name.split(' ')[0]}
               </span>
-              <span className="eyebrow text-svep-accent bg-svep-accent-light px-2 py-0.5 rounded">
+              <span
+                className="text-xs px-2.5 py-1 rounded-[6px] text-white font-medium"
+                style={{ background: 'var(--accent)' }}
+              >
                 {user.role}
               </span>
-              <button onClick={logout} className="text-svep-tertiary hover:text-red-500 transition-colors text-xs">
+              <button onClick={logout} className="text-white/60 hover:text-red-400 transition-colors text-xs">
                 ✕
               </button>
             </>
           ) : (
             <Link to="/login"
-              className="text-xs px-3 py-1.5 border border-svep-border rounded text-svep-secondary hover:border-svep-accent hover:text-svep-accent transition-colors">
+              className="text-xs px-3 py-1.5 rounded-[6px] text-white font-medium transition-colors"
+              style={{ background: 'var(--accent)' }}>
               Войти
             </Link>
           )}

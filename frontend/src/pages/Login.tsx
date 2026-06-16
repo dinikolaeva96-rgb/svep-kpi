@@ -28,47 +28,55 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-svep-bg flex items-center justify-center px-4">
-      <div className="w-full max-w-[400px]">
+    <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden" style={{ background: 'var(--navy)' }}>
+      <GeometricMotif variant="watermark" className="text-white opacity-[0.04] !absolute top-0 right-0" />
+
+      <div className="relative w-full max-w-[400px]">
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center mb-5">
-            <GeometricMotif variant="header" className="w-16 h-16" />
+            <GeometricMotif variant="header" className="text-white w-16 h-16" />
           </div>
-          <h1 className="font-brutal font-extrabold text-3xl tracking-[-0.01em] text-svep-primary">
-            Экосистема <span style={{ color: 'var(--accent)' }}>СВЭП</span>
+          <h1 className="font-brutal font-extrabold text-3xl tracking-[-0.01em] text-white">
+            Вход в систему
           </h1>
-          <p className="eyebrow mt-3">ООО Средневолжскэлектропроект</p>
+          <p className="eyebrow mt-3 text-white/65" style={{ textTransform: 'none', letterSpacing: 0 }}>
+            ООО Средневолжскэлектропроект
+          </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-svep-surface border border-svep-border rounded-xl p-6 space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-4"
+          style={{ background: 'var(--navy-surface)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 16, padding: 48 }}
+        >
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-2">
+            <div className="bg-red-500/10 border border-red-400/30 text-red-300 text-sm rounded-lg px-4 py-2">
               {error}
             </div>
           )}
           <div>
-            <label className="block eyebrow mb-2" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 12, color: 'var(--text-secondary)' }}>
+            <label className="block eyebrow mb-2 text-white/65" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 12 }}>
               Email
             </label>
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="input-light w-full"
+              className="input-navy w-full"
               placeholder="admin@svep.ru"
               required
             />
           </div>
           <div>
-            <label className="block eyebrow mb-2" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 12, color: 'var(--text-secondary)' }}>
+            <label className="block eyebrow mb-2 text-white/65" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 12 }}>
               Пароль
             </label>
             <input
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="input-light w-full"
+              className="input-navy w-full"
               required
             />
           </div>
@@ -77,7 +85,7 @@ export default function Login() {
             disabled={loading}
             className="w-full py-2.5 rounded-lg font-medium text-sm text-white disabled:opacity-50 transition-colors"
             style={{ backgroundColor: 'var(--accent)' }}
-            onMouseOver={e => !loading && (e.currentTarget.style.backgroundColor = 'var(--accent-dark)')}
+            onMouseOver={e => !loading && (e.currentTarget.style.backgroundColor = 'var(--accent-hover)')}
             onMouseOut={e => (e.currentTarget.style.backgroundColor = 'var(--accent)')}
           >
             {loading ? 'Вход…' : 'Войти'}
@@ -85,9 +93,9 @@ export default function Login() {
         </form>
 
         <div className="mt-4 text-center space-y-1">
-          <p className="eyebrow" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 11 }}>Демо-учётные данные:</p>
-          <p className="mono-num text-xs text-svep-secondary">admin@svep.ru / Admin123!</p>
-          <p className="mono-num text-xs text-svep-tertiary">director@svep.ru / Director1!</p>
+          <p className="eyebrow text-white/40" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 11 }}>Демо-учётные данные:</p>
+          <p className="mono-num text-xs text-white/65">admin@svep.ru / Admin123!</p>
+          <p className="mono-num text-xs text-white/40">director@svep.ru / Director1!</p>
         </div>
       </div>
     </div>

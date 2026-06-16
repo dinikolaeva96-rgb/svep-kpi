@@ -17,7 +17,7 @@ export default function MasterMap() {
   const MONTH_NAMES = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек']
 
   return (
-    <div className="pt-14 bg-svep-bg min-h-screen">
+    <div className="pt-16 bg-svep-bg min-h-screen">
       <div className="max-w-screen-xl mx-auto px-6">
         <div className="flex flex-wrap items-center justify-between gap-4 py-8">
           <div>

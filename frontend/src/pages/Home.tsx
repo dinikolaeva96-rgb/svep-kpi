@@ -68,53 +68,46 @@ export default function Home() {
     : DOMAIN_META.map(dm => ({ ...dm, avg: null }))
 
   return (
-    <div className="pt-14 bg-svep-bg min-h-screen">
-      {/* Hero */}
-      <section className="relative max-w-screen-xl mx-auto px-6 py-16 md:py-20 overflow-hidden">
-        <div className="relative grid md:grid-cols-2 gap-12 items-center">
-          {/* Left */}
-          <div>
-            <p className="eyebrow mb-5">ООО Средневолжскэлектропроект · Казань</p>
-            <h1 className="font-brutal font-extrabold text-[42px] leading-[1.05] tracking-[-0.01em] text-svep-primary mb-5">
-              Экосистема<br/>
-              <span style={{ color: 'var(--accent)' }}>СВЭП</span>
-            </h1>
-            <p className="text-svep-secondary text-base leading-relaxed max-w-md mb-10">
-              KPI-портал для 16 отделов и 106 сотрудников. Проектирование электросетей 0.4–220 кВ.
-            </p>
+    <div className="pt-16 bg-svep-bg min-h-screen">
+      {/* Hero — dark navy */}
+      <section className="relative overflow-hidden" style={{ background: 'var(--navy)', minHeight: 320 }}>
+        <GeometricMotif variant="watermark" className="text-white opacity-[0.05] !absolute top-0 right-0" />
+        <div className="relative max-w-screen-xl mx-auto px-6 py-16 md:py-20">
+          <p className="eyebrow mb-5 text-white/65">ООО Средневолжскэлектропроект · Казань</p>
+          <h1 className="font-brutal font-extrabold text-[48px] leading-[1.05] tracking-[-0.01em] text-white mb-5">
+            Экосистема<br/>
+            <span style={{ color: '#5FA8E0' }}>СВЭП</span>
+          </h1>
+          <p className="text-white/65 text-base leading-relaxed max-w-md mb-10">
+            KPI-портал для 16 отделов и 106 сотрудников. Проектирование электросетей 0.4–220 кВ.
+          </p>
 
-            {/* 4 Stats */}
-            <div className="grid grid-cols-4 gap-0">
-              {[
-                { value: '16',    label: 'Отделов' },
-                { value: '106',   label: 'Сотрудников' },
-                { value: avgScore !== null ? `${avgScore}%` : '…', label: 'Средний KPI', extra: trendDir !== 0 ? trendIcon : undefined, extraColor: trendDir > 0 ? '#16A34A' : '#DC2626' },
-                { value: alertCount !== null ? String(alertCount) : '…', label: 'Алертов', valueColor: (alertCount ?? 0) > 0 ? '#DC2626' : '#16A34A' },
-              ].map((s, i) => (
-                <div key={i} className="pt-4 pr-4" style={{ borderTop: '1px solid var(--border)' }}>
-                  <div className="flex items-baseline gap-1">
-                    <span className="mono-num text-[22px] font-medium text-svep-primary" style={s.valueColor ? { color: s.valueColor } : {}}>
-                      {s.value}
-                    </span>
-                    {s.extra && (
-                      <span className="text-sm" style={{ color: s.extraColor }}>{s.extra}</span>
-                    )}
-                  </div>
-                  <p className="eyebrow mt-1">{s.label}</p>
+          {/* 4 Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
+            {[
+              { value: '16',    label: 'Отделов' },
+              { value: '106',   label: 'Сотрудников' },
+              { value: avgScore !== null ? `${avgScore}%` : '…', label: 'Средний KPI', extra: trendDir !== 0 ? trendIcon : undefined, extraColor: trendDir > 0 ? '#4ADE80' : '#F87171' },
+              { value: alertCount !== null ? String(alertCount) : '…', label: 'Алертов', valueColor: (alertCount ?? 0) > 0 ? '#F87171' : '#4ADE80' },
+            ].map((s, i) => (
+              <div key={i} className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.08)' }}>
+                <div className="flex items-baseline gap-1">
+                  <span className="mono-num text-[22px] font-medium text-white" style={s.valueColor ? { color: s.valueColor } : {}}>
+                    {s.value}
+                  </span>
+                  {s.extra && (
+                    <span className="text-sm" style={{ color: s.extraColor }}>{s.extra}</span>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Right — decorative motif */}
-          <div className="hidden md:flex items-center justify-center">
-            <GeometricMotif variant="watermark" className="!relative" />
+                <p className="eyebrow mt-1 text-white/65">{s.label}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 6 Domains — numbered list */}
-      <section className="max-w-screen-xl mx-auto px-6 pb-12">
+      {/* 6 Domains — cards */}
+      <section className="max-w-screen-xl mx-auto px-6 py-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="font-brutal font-black text-2xl tracking-[-0.01em] text-svep-primary">
             6 lean-доменов
@@ -124,52 +117,41 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="divide-y divide-svep-border">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {domainAvgs.map((d, i) => (
             <Link
               key={d.code}
               to={`/domain/${d.code}`}
-              className="group relative flex items-center gap-5 py-4 hover:bg-gray-50 transition-colors px-2 -mx-2 rounded-lg overflow-hidden"
+              className="group relative bg-svep-surface rounded-card p-5 transition-all hover:-translate-y-0.5 overflow-hidden"
+              style={{ borderLeft: '3px solid var(--accent)', boxShadow: '0 1px 2px rgba(10,22,40,0.04)' }}
+              onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(24,95,165,0.12)' }}
+              onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 2px rgba(10,22,40,0.04)' }}
             >
-              <GeometricMotif variant="ghost" className="!absolute -top-6 -right-6" />
+              <GeometricMotif variant="ghost" className="text-svep-accent !absolute -top-6 -right-6" />
 
-              {/* Number */}
-              <span className="mono-num text-svep-tertiary w-7 text-sm shrink-0">
-                {String(i + 1).padStart(2, '0')}
-              </span>
+              <div className="flex items-center justify-between mb-3">
+                <span className="mono-num text-svep-tertiary text-xs">{String(i + 1).padStart(2, '0')}</span>
+                {d.avg !== null ? (
+                  <span className={`mono-num text-sm font-medium ${
+                    d.avg >= 80 ? 'text-green-600' : d.avg >= 60 ? 'text-amber-600' : 'text-red-600'
+                  }`}>
+                    {d.avg}%
+                  </span>
+                ) : (
+                  <span className="text-svep-tertiary text-sm">—</span>
+                )}
+              </div>
 
-              {/* Icon box */}
-              <div className={`w-9 h-9 flex items-center justify-center rounded border shrink-0 ${
-                d.code === 'innovation'
-                  ? 'border-svep-accent text-svep-accent'
-                  : 'border-svep-border text-svep-secondary'
-              }`}>
+              <div className="w-9 h-9 flex items-center justify-center text-svep-accent mb-3">
                 <DomainIcon code={d.code} />
               </div>
 
-              {/* Label + desc */}
-              <div className="flex-1 min-w-0">
-                <div className="text-svep-primary font-medium text-sm group-hover:text-svep-accent transition-colors">
-                  {d.label}
-                </div>
-                <div className="eyebrow mt-0.5 normal-case tracking-normal text-svep-tertiary" style={{ textTransform: 'none', letterSpacing: 0 }}>
-                  {d.desc}
-                </div>
+              <div className="font-brutal font-extrabold text-svep-primary group-hover:text-svep-accent transition-colors">
+                {d.label}
               </div>
-
-              {/* Score */}
-              {d.avg !== null ? (
-                <span className={`mono-num text-sm font-medium shrink-0 ${
-                  d.avg >= 80 ? 'text-green-600' : d.avg >= 60 ? 'text-amber-600' : 'text-red-600'
-                }`}>
-                  {d.avg}%
-                </span>
-              ) : (
-                <span className="text-svep-tertiary text-sm shrink-0">—</span>
-              )}
-
-              {/* Arrow */}
-              <span className="text-svep-tertiary group-hover:text-svep-accent transition-colors text-sm shrink-0">→</span>
+              <div className="text-svep-secondary text-sm mt-1">
+                {d.desc}
+              </div>
             </Link>
           ))}
         </div>

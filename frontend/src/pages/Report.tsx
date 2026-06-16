@@ -65,7 +65,7 @@ export default function Report() {
   }) ?? []
 
   return (
-    <div className="pt-14 bg-svep-bg min-h-screen">
+    <div className="pt-16 bg-svep-bg min-h-screen">
       <div className="max-w-screen-xl mx-auto px-4 pb-12" ref={printRef}>
         {/* Шапка */}
         <div className="flex flex-wrap items-start justify-between gap-4 py-6 print:py-2">

@@ -27,22 +27,30 @@
 @tailwind utilities;
 
 :root {
-  --bg:               #FAF9F6;
+  --bg:               #F5F6F8;
   --surface:           #FFFFFF;
-  --border:            rgba(0,0,0,0.08);
+  --border:            #E8EAF0;
   --accent:            #185FA5;
+  --accent-hover:      #1A6FBF;
   --accent-deep:       #0C447C;
   --accent-deep-text:  #B5D4F4;
-  --text-primary:      #1A1A1A;
-  --text-secondary:    #5F5E5A;
-  --text-tertiary:     #888780;
-  --badge-bg:          #E6F1FB;
-  --badge-text:        #0C447C;
-  --success-bg:        #E1F5EE;
-  --success-text:      #085041;
+  --text-primary:      #0A1628;
+  --text-secondary:    #4A5568;
+  --text-tertiary:     #718096;
+  --badge-bg:          #EBF3FB;
+  --badge-text:        #0A1628;
+  --success-bg:        #E6F7F0;
+  --success-text:      #065F46;
   --progress-design:   #185FA5;
   --progress-survey:   #1D9E75;
   --progress-expert:   #D85A30;
+
+  /* Dark navbar / hero / login surfaces */
+  --navy:              #0A1628;
+  --navy-surface:      #0F1F3D;
+  --navy-input:        #1A2F52;
+  --navy-border:       rgba(255,255,255,0.08);
+  --navy-border-strong: rgba(255,255,255,0.15);
 }
 
 body {
@@ -101,6 +109,19 @@ body {
   outline: none;
 }
 .input-light:focus { border-color: var(--accent); }
+
+/* Dark (navy) input — used on Login page */
+.input-navy {
+  background: var(--navy-input);
+  border: 1px solid var(--navy-border-strong);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #FFFFFF;
+  outline: none;
+}
+.input-navy::placeholder { color: rgba(255,255,255,0.4); }
+.input-navy:focus { border-color: var(--accent); }
 
 /* Heatmap score cells — light palette */
 .cell-green  { background: #DCFCE7; color: #15803D; }
