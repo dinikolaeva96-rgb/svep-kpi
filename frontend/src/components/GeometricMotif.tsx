@@ -50,8 +50,6 @@ export default function GeometricMotif({ variant, className }: GeometricMotifPro
       <line x1="50" y1="4"  x2="22" y2="124" stroke="currentColor" strokeWidth={strokeWidth} />
       <line x1="10" y1="38" x2="78" y2="124" stroke="currentColor" strokeWidth={strokeWidth} />
       <line x1="90" y1="38" x2="22" y2="124" stroke="currentColor" strokeWidth={strokeWidth} />
-      <line x1="10" y1="38" x2="90" y2="38"  stroke="currentColor" strokeWidth={strokeWidth} />
-      <line x1="50" y1="4"  x2="50" y2="124" stroke="currentColor" strokeWidth={strokeWidth} />
     </svg>
   )
 }

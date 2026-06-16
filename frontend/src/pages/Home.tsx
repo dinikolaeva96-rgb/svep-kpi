@@ -25,12 +25,12 @@ function DomainIcon({ code }: { code: string }) {
 }
 
 const DOMAIN_META = [
-  { code: 'quality',    label: 'Качество',     desc: 'Доля проектов без замечаний' },
-  { code: 'delivery',   label: 'Сроки',        desc: 'Соблюдение планов-графиков' },
-  { code: 'cost',       label: 'Затраты',       desc: 'Контроль бюджетных отклонений' },
-  { code: 'safety',     label: 'Безопасность', desc: 'Инциденты и нарушения' },
-  { code: 'morale',     label: 'Вовлечённость', desc: 'Индекс удовлетворённости' },
-  { code: 'innovation', label: 'Инновации',    desc: 'Кайдзен-предложения' },
+  { code: 'quality',    label: 'Производство',           desc: 'Эффективность производственных процессов' },
+  { code: 'delivery',   label: 'Бережливое производство', desc: 'Устранение потерь и оптимизация' },
+  { code: 'cost',       label: 'Люди',                    desc: 'Развитие и мотивация сотрудников' },
+  { code: 'safety',     label: 'Знания и технологии',     desc: 'Компетенции и инновации' },
+  { code: 'morale',     label: 'Внешняя среда',           desc: 'Взаимодействие с клиентами и партнёрами' },
+  { code: 'innovation', label: 'Культура и среда',        desc: 'Корпоративная культура' },
 ]
 
 export default function Home() {
@@ -76,7 +76,7 @@ export default function Home() {
           <p className="eyebrow mb-5 text-white/65">ООО Средневолжскэлектропроект · Казань</p>
           <h1 className="font-brutal font-extrabold text-[48px] leading-[1.05] tracking-[-0.01em] text-white mb-5">
             Экосистема<br/>
-            <span style={{ color: '#5FA8E0' }}>СВЭП</span>
+            <span style={{ color: '#4A9BE8' }}>СВЭП</span>
           </h1>
           <p className="text-white/65 text-base leading-relaxed max-w-md mb-10">
             KPI-портал для 16 отделов и 106 сотрудников. Проектирование электросетей 0.4–220 кВ.
@@ -90,7 +90,7 @@ export default function Home() {
               { value: avgScore !== null ? `${avgScore}%` : '…', label: 'Средний KPI', extra: trendDir !== 0 ? trendIcon : undefined, extraColor: trendDir > 0 ? '#4ADE80' : '#F87171' },
               { value: alertCount !== null ? String(alertCount) : '…', label: 'Алертов', valueColor: (alertCount ?? 0) > 0 ? '#F87171' : '#4ADE80' },
             ].map((s, i) => (
-              <div key={i} className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.08)' }}>
+              <div key={i} className="rounded-xl p-4" style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <div className="flex items-baseline gap-1">
                   <span className="mono-num text-[22px] font-medium text-white" style={s.valueColor ? { color: s.valueColor } : {}}>
                     {s.value}
@@ -122,8 +122,8 @@ export default function Home() {
             <Link
               key={d.code}
               to={`/domain/${d.code}`}
-              className="group relative bg-svep-surface rounded-card p-5 transition-all hover:-translate-y-0.5 overflow-hidden"
-              style={{ borderLeft: '3px solid var(--accent)', boxShadow: '0 1px 2px rgba(10,22,40,0.04)' }}
+              className="group relative bg-svep-surface transition-all hover:-translate-y-0.5 overflow-hidden"
+              style={{ borderLeft: '3px solid var(--accent)', borderRadius: 10, padding: 16, boxShadow: '0 1px 2px rgba(10,22,40,0.04)' }}
               onMouseEnter={e => { e.currentTarget.style.boxShadow = '0 4px 16px rgba(24,95,165,0.12)' }}
               onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 1px 2px rgba(10,22,40,0.04)' }}
             >
