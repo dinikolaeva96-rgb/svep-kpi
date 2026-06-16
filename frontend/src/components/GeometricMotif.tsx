@@ -3,10 +3,10 @@ interface GeometricMotifProps {
   className?: string
 }
 
-/* СВЭП crystal symbol — irregular ~10-point faceted polygon with
-   crossing internal diagonals. Stroke-only, no fill. Color/opacity
-   are controlled by the caller via `className` using currentColor,
-   except `ghost` which bakes in a fixed low opacity per spec. */
+/* СВЭП crystal symbol — asymmetric diamond outline with internal
+   facet diagonals, per brand-book geometry. Stroke-only, no fill.
+   Color/opacity are controlled by the caller via `className` using
+   currentColor, except `ghost` which bakes in a fixed low opacity. */
 
 const SIZE: Record<GeometricMotifProps['variant'], number> = {
   header: 28,
@@ -29,16 +29,16 @@ const POSITION: Record<GeometricMotifProps['variant'], React.CSSProperties> = {
   hero: {},
 }
 
-/* Irregular 10-point polygon, elongated, faceted like a cut crystal */
-const POINTS = '50,2 72,10 92,34 96,60 84,92 64,124 38,126 16,98 4,62 12,28'
+/* Asymmetric 9-point outer contour, clockwise from upper-left vertex */
+const POINTS = '28,2 72,8 88,28 82,72 62,95 35,90 8,68 2,42 12,18'
 
 const DIAGONALS: [string, string][] = [
-  ['50,2', '64,124'],
-  ['50,2', '38,126'],
-  ['72,10', '16,98'],
-  ['92,34', '38,126'],
-  ['4,62', '84,92'],
-  ['12,28', '96,60'],
+  ['28,2',  '82,72'],
+  ['72,8',  '8,68'],
+  ['2,42',  '62,95'],
+  ['12,18', '88,28'],
+  ['35,90', '88,28'],
+  ['2,42',  '88,28'],
 ]
 
 export default function GeometricMotif({ variant, className }: GeometricMotifProps) {
@@ -47,9 +47,9 @@ export default function GeometricMotif({ variant, className }: GeometricMotifPro
 
   return (
     <svg
-      viewBox="0 0 100 130"
+      viewBox="0 0 100 100"
       width={size}
-      height={Math.round(size * 1.3)}
+      height={size}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
@@ -59,12 +59,21 @@ export default function GeometricMotif({ variant, className }: GeometricMotifPro
         points={POINTS}
         stroke="currentColor"
         strokeWidth={strokeWidth}
+        strokeLinecap="round"
         strokeLinejoin="round"
       />
       {DIAGONALS.map(([a, b], i) => {
         const [x1, y1] = a.split(',')
         const [x2, y2] = b.split(',')
-        return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke="currentColor" strokeWidth={strokeWidth} />
+        return (
+          <line
+            key={i}
+            x1={x1} y1={y1} x2={x2} y2={y2}
+            stroke="currentColor"
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+          />
+        )
       })}
     </svg>
   )
