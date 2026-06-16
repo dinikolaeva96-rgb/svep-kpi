@@ -2,14 +2,35 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getMaster, getCompanyTrends, getAlerts } from '@/api'
 import type { MasterResponse, TrendPoint, AlertsResponse } from '@/types'
+import GeometricMotif from '@/components/GeometricMotif'
+
+function DomainIcon({ code }: { code: string }) {
+  const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
+  switch (code) {
+    case 'quality':
+      return <svg viewBox="0 0 24 24" width={18} height={18} {...common}><path d="M8 3h8v4a4 4 0 0 1-8 0V3Z"/><path d="M8 7H5a3 3 0 0 0 3 3"/><path d="M16 7h3a3 3 0 0 1-3 3"/><path d="M12 14v4M9 21h6"/></svg>
+    case 'delivery':
+      return <svg viewBox="0 0 24 24" width={18} height={18} {...common}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    case 'cost':
+      return <svg viewBox="0 0 24 24" width={18} height={18} {...common}><path d="M12 3v18M16 7H10a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6H8"/></svg>
+    case 'safety':
+      return <svg viewBox="0 0 24 24" width={18} height={18} {...common}><path d="M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6l-7-3Z"/></svg>
+    case 'morale':
+      return <svg viewBox="0 0 24 24" width={18} height={18} {...common}><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
+    case 'innovation':
+      return <svg viewBox="0 0 24 24" width={18} height={18} {...common}><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3 11c.5.4 1 1.2 1 2h4c0-.8.5-1.6 1-2a6 6 0 0 0-3-11Z"/></svg>
+    default:
+      return null
+  }
+}
 
 const DOMAIN_META = [
-  { code: 'quality',    icon: '🏆', label: 'Качество',     desc: 'Доля проектов без замечаний' },
-  { code: 'delivery',   icon: '⏱️', label: 'Сроки',        desc: 'Соблюдение планов-графиков' },
-  { code: 'cost',       icon: '💰', label: 'Затраты',       desc: 'Контроль бюджетных отклонений' },
-  { code: 'safety',     icon: '🛡️', label: 'Безопасность', desc: 'Инциденты и нарушения' },
-  { code: 'morale',     icon: '❤️', label: 'Вовлечённость', desc: 'Индекс удовлетворённости' },
-  { code: 'innovation', icon: '💡', label: 'Инновации',    desc: 'Кайдзен-предложения' },
+  { code: 'quality',    label: 'Качество',     desc: 'Доля проектов без замечаний' },
+  { code: 'delivery',   label: 'Сроки',        desc: 'Соблюдение планов-графиков' },
+  { code: 'cost',       label: 'Затраты',       desc: 'Контроль бюджетных отклонений' },
+  { code: 'safety',     label: 'Безопасность', desc: 'Инциденты и нарушения' },
+  { code: 'morale',     label: 'Вовлечённость', desc: 'Индекс удовлетворённости' },
+  { code: 'innovation', label: 'Инновации',    desc: 'Кайдзен-предложения' },
 ]
 
 export default function Home() {
@@ -49,12 +70,12 @@ export default function Home() {
   return (
     <div className="pt-14 bg-svep-bg min-h-screen">
       {/* Hero */}
-      <section className="max-w-screen-xl mx-auto px-6 py-16 md:py-20">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+      <section className="relative max-w-screen-xl mx-auto px-6 py-16 md:py-20 overflow-hidden">
+        <div className="relative grid md:grid-cols-2 gap-12 items-center">
           {/* Left */}
           <div>
             <p className="eyebrow mb-5">ООО Средневолжскэлектропроект · Казань</p>
-            <h1 className="font-brutal font-black text-[42px] leading-[1.05] tracking-[-0.01em] text-svep-primary mb-5">
+            <h1 className="font-brutal font-extrabold text-[42px] leading-[1.05] tracking-[-0.01em] text-svep-primary mb-5">
               Экосистема<br/>
               <span style={{ color: 'var(--accent)' }}>СВЭП</span>
             </h1>
@@ -85,28 +106,9 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right — decorative crystal */}
+          {/* Right — decorative motif */}
           <div className="hidden md:flex items-center justify-center">
-            <div className="relative" style={{ width: 280, height: 280 }}>
-              {/* Background glow */}
-              <div className="absolute inset-0 rounded-full" style={{ background: 'radial-gradient(circle, var(--accent-light) 0%, transparent 70%)' }} />
-              <svg viewBox="0 0 40 52" fill="none" xmlns="http://www.w3.org/2000/svg"
-                style={{ width: '100%', height: '100%', color: 'var(--border)' }}>
-                <path d="M20 2 L38 15 L38 37 L20 50 L2 37 L2 15 Z" stroke="currentColor" strokeWidth="0.6" strokeLinejoin="round"/>
-                <line x1="20" y1="2" x2="2" y2="26" stroke="currentColor" strokeWidth="0.4"/>
-                <line x1="20" y1="2" x2="38" y2="26" stroke="currentColor" strokeWidth="0.4"/>
-                <line x1="20" y1="2" x2="20" y2="26" stroke="currentColor" strokeWidth="0.4"/>
-                <line x1="2" y1="26" x2="20" y2="50" stroke="currentColor" strokeWidth="0.4"/>
-                <line x1="38" y1="26" x2="20" y2="50" stroke="currentColor" strokeWidth="0.4"/>
-                <line x1="20" y1="26" x2="20" y2="50" stroke="currentColor" strokeWidth="0.4"/>
-                <line x1="2" y1="15" x2="38" y2="26" stroke="currentColor" strokeWidth="0.3"/>
-                <line x1="38" y1="15" x2="2" y2="26" stroke="currentColor" strokeWidth="0.3"/>
-                <line x1="2" y1="37" x2="38" y2="26" stroke="currentColor" strokeWidth="0.3"/>
-                <line x1="38" y1="37" x2="2" y2="26" stroke="currentColor" strokeWidth="0.3"/>
-                {/* Accent girdle line */}
-                <line x1="2" y1="26" x2="38" y2="26" stroke="var(--accent)" strokeWidth="0.8"/>
-              </svg>
-            </div>
+            <GeometricMotif variant="watermark" className="!relative" />
           </div>
         </div>
       </section>
@@ -127,20 +129,22 @@ export default function Home() {
             <Link
               key={d.code}
               to={`/domain/${d.code}`}
-              className="group flex items-center gap-5 py-4 hover:bg-gray-50 transition-colors px-2 -mx-2 rounded-lg"
+              className="group relative flex items-center gap-5 py-4 hover:bg-gray-50 transition-colors px-2 -mx-2 rounded-lg overflow-hidden"
             >
+              <GeometricMotif variant="ghost" className="!absolute -top-6 -right-6" />
+
               {/* Number */}
               <span className="mono-num text-svep-tertiary w-7 text-sm shrink-0">
                 {String(i + 1).padStart(2, '0')}
               </span>
 
               {/* Icon box */}
-              <div className={`w-9 h-9 flex items-center justify-center rounded border shrink-0 text-lg ${
+              <div className={`w-9 h-9 flex items-center justify-center rounded border shrink-0 ${
                 d.code === 'innovation'
                   ? 'border-svep-accent text-svep-accent'
                   : 'border-svep-border text-svep-secondary'
               }`}>
-                {d.icon}
+                <DomainIcon code={d.code} />
               </div>
 
               {/* Label + desc */}
@@ -175,7 +179,9 @@ export default function Home() {
       <section className="max-w-screen-xl mx-auto px-6 pb-12 grid sm:grid-cols-3 gap-4">
         <Link to="/alerts"
           className="group bg-svep-surface border border-svep-border hover:border-red-200 rounded-xl p-5 transition-all">
-          <div className="text-xl mb-2">🚨</div>
+          <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="#185FA5" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="mb-2">
+            <path d="M12 9v4M12 17h.01"/><path d="m10.3 4.3-7.6 13a1.5 1.5 0 0 0 1.3 2.2h16a1.5 1.5 0 0 0 1.3-2.2l-7.6-13a1.5 1.5 0 0 0-2.6 0Z"/>
+          </svg>
           <div className="font-medium text-svep-primary group-hover:text-red-600">Алерты</div>
           <div className="text-sm text-svep-secondary mt-1">
             {alerts ? `${alerts.summary.red + alerts.summary.yellow} показателей вне нормы` : '…'}
@@ -183,13 +189,17 @@ export default function Home() {
         </Link>
         <Link to="/kaizen"
           className="group bg-svep-surface border border-svep-border hover:border-svep-accent/40 rounded-xl p-5 transition-all">
-          <div className="text-xl mb-2">💡</div>
+          <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="#185FA5" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="mb-2">
+            <path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3 11c.5.4 1 1.2 1 2h4c0-.8.5-1.6 1-2a6 6 0 0 0-3-11Z"/>
+          </svg>
           <div className="font-medium text-svep-primary group-hover:text-svep-accent">Кайдзен</div>
           <div className="text-sm text-svep-secondary mt-1">Предложения по улучшению</div>
         </Link>
         <Link to="/dashboard"
           className="group bg-svep-surface border border-svep-border hover:border-svep-accent/40 rounded-xl p-5 transition-all">
-          <div className="text-xl mb-2">📺</div>
+          <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="#185FA5" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="mb-2">
+            <rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/>
+          </svg>
           <div className="font-medium text-svep-primary group-hover:text-svep-accent">TV-дашборд</div>
           <div className="text-sm text-svep-secondary mt-1">Публичный экран</div>
         </Link>

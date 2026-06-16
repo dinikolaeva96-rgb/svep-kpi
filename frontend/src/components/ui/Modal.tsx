@@ -21,12 +21,12 @@ export default function Modal({ open, onClose, title, children, className }: Pro
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className={clsx('relative bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl w-full max-w-lg', className)}>
+      <div className="absolute inset-0 bg-black/40" onClick={onClose} />
+      <div className={clsx('relative bg-svep-surface border border-svep-border rounded-xl w-full max-w-lg', className)}>
         {title && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-white">{title}</h2>
-            <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors text-xl leading-none">×</button>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-svep-border">
+            <h2 className="text-lg font-semibold text-svep-primary">{title}</h2>
+            <button onClick={onClose} className="text-svep-tertiary hover:text-svep-primary transition-colors text-xl leading-none">×</button>
           </div>
         )}
         <div className="p-6">{children}</div>

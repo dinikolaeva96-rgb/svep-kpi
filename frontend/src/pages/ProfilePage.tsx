@@ -52,11 +52,11 @@ export default function ProfilePage() {
   return (
     <div className="pt-20 px-4 max-w-2xl mx-auto pb-12 bg-svep-bg min-h-screen">
       <div className="py-6">
-        <h1 className="font-brutal font-black text-2xl text-svep-primary">Профиль</h1>
+        <h1 className="font-brutal font-extrabold text-2xl text-svep-primary">Профиль</h1>
       </div>
 
       {/* Карточка пользователя */}
-      <div className="bg-svep-surface border border-svep-border rounded-2xl p-6 mb-6">
+      <div className="bg-svep-surface border border-svep-border rounded-xl p-6 mb-6">
         <div className="flex items-center gap-4 mb-6">
           <div className="w-14 h-14 rounded-full flex items-center justify-center text-2xl font-bold text-white"
             style={{ backgroundColor: 'var(--accent)' }}>
@@ -84,7 +84,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Смена пароля */}
-      <div className="bg-svep-surface border border-svep-border rounded-2xl p-6 mb-6">
+      <div className="bg-svep-surface border border-svep-border rounded-xl p-6 mb-6">
         <h2 className="text-lg font-semibold text-svep-primary mb-4">Изменить пароль</h2>
         <form onSubmit={handleChangePassword} className="space-y-3">
           {msg && (
@@ -124,7 +124,7 @@ export default function ProfilePage() {
       </div>
 
       {/* Выход */}
-      <div className="bg-svep-surface border border-red-100 rounded-2xl p-6">
+      <div className="bg-svep-surface border border-red-100 rounded-xl p-6">
         <h2 className="text-lg font-semibold text-svep-primary mb-2">Сессия</h2>
         <p className="text-svep-secondary text-sm mb-4">Выйти из всех устройств</p>
         <button

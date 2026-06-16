@@ -5,15 +5,23 @@ export default {
     extend: {
       colors: {
         svep: {
-          bg:        '#FAFAF8',
+          bg:        '#FAF9F6',
           surface:   '#FFFFFF',
-          primary:   '#16191E',
-          secondary: '#6E6B65',
-          tertiary:  '#9B9892',
-          border:    '#E7E5E0',
-          accent:    '#1C7FBE',
-          'accent-light': '#EBF4FB',
+          primary:   '#1A1A1A',
+          secondary: '#5F5E5A',
+          tertiary:  '#888780',
+          border:    'rgba(0,0,0,0.08)',
+          accent:    '#185FA5',
+          'accent-deep': '#0C447C',
+          'accent-deep-text': '#B5D4F4',
+          'accent-light': '#E6F1FB',
+          success:   '#085041',
+          'success-light': '#E1F5EE',
         },
+      },
+      borderRadius: {
+        card: '12px',
+        control: '8px',
       },
       fontFamily: {
         sans:   ['Inter', 'system-ui', 'sans-serif'],

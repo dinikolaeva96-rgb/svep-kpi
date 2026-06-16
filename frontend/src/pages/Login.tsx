@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { login as apiLogin } from '@/api'
 import { useAuthStore } from '@/store/auth'
-import LogoMark from '@/assets/logo-mark.svg?react'
+import GeometricMotif from '@/components/GeometricMotif'
 
 export default function Login() {
   const [email, setEmail]       = useState('')
@@ -29,19 +29,19 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-svep-bg flex items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+      <div className="w-full max-w-[400px]">
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center mb-5">
-            <LogoMark style={{ width: 64, height: 64, color: 'var(--accent)' }} />
+            <GeometricMotif variant="header" className="w-16 h-16" />
           </div>
-          <h1 className="font-brutal font-black text-3xl tracking-[-0.01em] text-svep-primary">
+          <h1 className="font-brutal font-extrabold text-3xl tracking-[-0.01em] text-svep-primary">
             Экосистема <span style={{ color: 'var(--accent)' }}>СВЭП</span>
           </h1>
           <p className="eyebrow mt-3">ООО Средневолжскэлектропроект</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="bg-svep-surface border border-svep-border rounded-2xl p-6 space-y-4">
+        <form onSubmit={handleSubmit} className="bg-svep-surface border border-svep-border rounded-xl p-6 space-y-4">
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-lg px-4 py-2">
               {error}

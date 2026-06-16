@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useAuthStore } from '@/store/auth'
-import LogoMark from '@/assets/logo-mark.svg?react'
+import GeometricMotif from '@/components/GeometricMotif'
 
 const ROLE_LEVELS: Record<string, number> = { public: 0, dept_head: 1, management: 2, admin: 3 }
 
@@ -22,7 +22,7 @@ export default function Navbar() {
       <div className="max-w-screen-xl mx-auto px-6 h-14 flex items-center gap-5">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5 shrink-0 text-svep-primary hover:text-svep-accent transition-colors">
-          <LogoMark className="w-5 h-5" style={{ color: 'var(--accent)' }} />
+          <GeometricMotif variant="header" />
           <span className="font-brutal font-black tracking-[.18em] text-sm">СВЭП</span>
         </Link>
 

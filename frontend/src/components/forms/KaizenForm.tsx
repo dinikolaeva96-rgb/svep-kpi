@@ -43,21 +43,21 @@ export default function KaizenForm({ departments, domains, defaultDeptId, onCrea
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-3 py-2">{error}</div>
+        <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-3 py-2">{error}</div>
       )}
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs text-gray-400 mb-1.5">Отдел *</label>
+          <label className="block text-xs text-svep-tertiary mb-1.5">Отдел *</label>
           <select value={deptId} onChange={e => setDeptId(+e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+            className="w-full input-light">
             {departments.map(d => <option key={d.id} value={d.id}>{d.name_short}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-xs text-gray-400 mb-1.5">Домен</label>
+          <label className="block text-xs text-svep-tertiary mb-1.5">Домен</label>
           <select value={domainId} onChange={e => setDomainId(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+            className="w-full input-light">
             <option value="">— Не выбран —</option>
             {domains.map(d => <option key={d.id} value={d.id}>{d.name_ru}</option>)}
           </select>
@@ -65,45 +65,45 @@ export default function KaizenForm({ departments, domains, defaultDeptId, onCrea
       </div>
 
       <div>
-        <label className="block text-xs text-gray-400 mb-1.5">Заголовок *</label>
+        <label className="block text-xs text-svep-tertiary mb-1.5">Заголовок *</label>
         <input
           type="text"
           value={title}
           onChange={e => setTitle(e.target.value)}
           required
           maxLength={200}
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+          className="w-full input-light"
           placeholder="Краткое описание улучшения…"
         />
       </div>
 
       <div>
-        <label className="block text-xs text-gray-400 mb-1.5">Подробное описание</label>
+        <label className="block text-xs text-svep-tertiary mb-1.5">Подробное описание</label>
         <textarea
           value={description}
           onChange={e => setDescription(e.target.value)}
           rows={3}
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+          className="w-full input-light resize-none"
           placeholder="Проблема, предлагаемое решение, ожидаемый эффект…"
         />
       </div>
 
       <div>
-        <label className="block text-xs text-gray-400 mb-1.5">Автор</label>
+        <label className="block text-xs text-svep-tertiary mb-1.5">Автор</label>
         <input
           type="text"
           value={authorName}
           onChange={e => setAuthorName(e.target.value)}
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+          className="w-full input-light"
           placeholder="Имя сотрудника"
         />
       </div>
 
       <div className="flex gap-2 justify-end pt-1">
-        <button type="button" onClick={onCancel} className="px-4 py-2 text-sm text-gray-400 hover:text-white bg-gray-800 rounded-lg transition-colors">
+        <button type="button" onClick={onCancel} className="px-4 py-2 text-sm text-svep-secondary hover:text-svep-primary bg-svep-bg rounded-lg transition-colors">
           Отмена
         </button>
-        <button type="submit" disabled={saving || !title.trim()} className="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded-lg transition-colors font-medium">
+        <button type="submit" disabled={saving || !title.trim()} style={{ backgroundColor: 'var(--accent)' }} className="px-4 py-2 text-sm text-white disabled:opacity-50 rounded-lg transition-colors font-medium">
           {saving ? 'Отправка…' : 'Отправить'}
         </button>
       </div>

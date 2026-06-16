@@ -43,57 +43,57 @@ export default function KpiEntryForm({ indicator, deptId, year, month, initialAc
 
   return (
     <form onSubmit={handleSave} className="space-y-4">
-      <div className="bg-gray-800/50 rounded-lg p-3 text-sm">
-        <div className="text-white font-medium">{indicator.name}</div>
-        <div className="text-gray-400 text-xs mt-1">
+      <div className="bg-svep-bg rounded-lg p-3 text-sm">
+        <div className="text-svep-primary font-medium">{indicator.name}</div>
+        <div className="text-svep-tertiary text-xs mt-1">
           {MONTH_NAMES[month - 1]} {year} · Единица: {indicator.unit} · Цель: {indicator.target}
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-3 py-2">{error}</div>
+        <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-3 py-2">{error}</div>
       )}
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs text-gray-400 mb-1.5">Факт ({indicator.unit})</label>
+          <label className="block text-xs text-svep-tertiary mb-1.5">Факт ({indicator.unit})</label>
           <input
             type="number"
             step="any"
             value={actual}
             onChange={e => setActual(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+            className="w-full input-light"
             placeholder="—"
           />
         </div>
         <div>
-          <label className="block text-xs text-gray-400 mb-1.5">План ({indicator.unit})</label>
+          <label className="block text-xs text-svep-tertiary mb-1.5">План ({indicator.unit})</label>
           <input
             type="number"
             step="any"
             value={plan}
             onChange={e => setPlan(e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+            className="w-full input-light"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-xs text-gray-400 mb-1.5">Комментарий</label>
+        <label className="block text-xs text-svep-tertiary mb-1.5">Комментарий</label>
         <textarea
           value={comment}
           onChange={e => setComment(e.target.value)}
           rows={2}
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+          className="w-full input-light resize-none"
           placeholder="Необязательно…"
         />
       </div>
 
       <div className="flex gap-2 justify-end pt-1">
-        <button type="button" onClick={onCancel} className="px-4 py-2 text-sm text-gray-400 hover:text-white bg-gray-800 rounded-lg transition-colors">
+        <button type="button" onClick={onCancel} className="px-4 py-2 text-sm text-svep-secondary hover:text-svep-primary bg-svep-bg rounded-lg transition-colors">
           Отмена
         </button>
-        <button type="submit" disabled={saving} className="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded-lg transition-colors font-medium">
+        <button type="submit" disabled={saving} style={{ backgroundColor: 'var(--accent)' }} className="px-4 py-2 text-sm text-white disabled:opacity-50 rounded-lg transition-colors font-medium">
           {saving ? 'Сохранение…' : 'Сохранить'}
         </button>
       </div>

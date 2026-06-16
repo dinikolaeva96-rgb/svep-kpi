@@ -48,46 +48,46 @@ export default function UserForm({ initial, departments, isNew = false, onSubmit
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm rounded-lg px-3 py-2">{error}</div>
+        <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-3 py-2">{error}</div>
       )}
 
       <div className="grid grid-cols-2 gap-3">
         <div className="col-span-2">
-          <label className="block text-xs text-gray-400 mb-1.5">ФИО *</label>
+          <label className="block text-xs text-svep-tertiary mb-1.5">ФИО *</label>
           <input value={form.name} onChange={e => set('name', e.target.value)} required
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500"
+            className="w-full input-light"
             placeholder="Иванов Иван Иванович" />
         </div>
 
         <div className="col-span-2">
-          <label className="block text-xs text-gray-400 mb-1.5">Email *</label>
+          <label className="block text-xs text-svep-tertiary mb-1.5">Email *</label>
           <input type="email" value={form.email} onChange={e => set('email', e.target.value)}
             required disabled={!isNew}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500 disabled:opacity-50"
+            className="w-full input-light disabled:opacity-50"
             placeholder="user@svep.ru" />
         </div>
 
         {isNew && (
           <div className="col-span-2">
-            <label className="block text-xs text-gray-400 mb-1.5">Пароль * (мин. 8 симв.)</label>
+            <label className="block text-xs text-svep-tertiary mb-1.5">Пароль * (мин. 8 симв.)</label>
             <input type="password" value={form.password} onChange={e => set('password', e.target.value)}
               required minLength={8}
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500" />
+              className="w-full input-light" />
           </div>
         )}
 
         <div>
-          <label className="block text-xs text-gray-400 mb-1.5">Роль *</label>
+          <label className="block text-xs text-svep-tertiary mb-1.5">Роль *</label>
           <select value={form.role} onChange={e => set('role', e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+            className="w-full input-light">
             {ROLES.map(r => <option key={r.value} value={r.value}>{r.label}</option>)}
           </select>
         </div>
 
         <div>
-          <label className="block text-xs text-gray-400 mb-1.5">Отдел</label>
+          <label className="block text-xs text-svep-tertiary mb-1.5">Отдел</label>
           <select value={form.dept_id} onChange={e => set('dept_id', e.target.value)}
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-blue-500">
+            className="w-full input-light">
             <option value="">— Все отделы —</option>
             {departments.map(d => <option key={d.id} value={d.id}>{d.name_short} — {d.name_full}</option>)}
           </select>
@@ -96,11 +96,12 @@ export default function UserForm({ initial, departments, isNew = false, onSubmit
 
       <div className="flex gap-2 justify-end pt-1">
         <button type="button" onClick={onCancel}
-          className="px-4 py-2 text-sm text-gray-400 hover:text-white bg-gray-800 rounded-lg transition-colors">
+          className="px-4 py-2 text-sm text-svep-secondary hover:text-svep-primary bg-svep-bg rounded-lg transition-colors">
           Отмена
         </button>
         <button type="submit" disabled={saving}
-          className="px-4 py-2 text-sm text-white bg-blue-600 hover:bg-blue-500 disabled:opacity-50 rounded-lg transition-colors font-medium">
+          style={{ backgroundColor: 'var(--accent)' }}
+          className="px-4 py-2 text-sm text-white disabled:opacity-50 rounded-lg transition-colors font-medium">
           {saving ? 'Сохранение…' : isNew ? 'Создать' : 'Сохранить'}
         </button>
       </div>

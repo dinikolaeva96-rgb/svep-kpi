@@ -1,11 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 @font-face {
   font-family: 'BrutalType';
   src: url('./assets/fonts/BrutalType.otf') format('opentype');
   font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'BrutalType';
+  src: url('./assets/fonts/BrutalTypeExtraBold.otf') format('opentype');
+  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
@@ -18,16 +22,27 @@
   font-display: swap;
 }
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  --bg:             #FAFAF8;
-  --surface:        #FFFFFF;
-  --text-primary:   #16191E;
-  --text-secondary: #6E6B65;
-  --text-tertiary:  #9B9892;
-  --border:         #E7E5E0;
-  --accent:         #1C7FBE;
-  --accent-light:   #EBF4FB;
-  --accent-dark:    #155F94;
+  --bg:               #FAF9F6;
+  --surface:           #FFFFFF;
+  --border:            rgba(0,0,0,0.08);
+  --accent:            #185FA5;
+  --accent-deep:       #0C447C;
+  --accent-deep-text:  #B5D4F4;
+  --text-primary:      #1A1A1A;
+  --text-secondary:    #5F5E5A;
+  --text-tertiary:     #888780;
+  --badge-bg:          #E6F1FB;
+  --badge-text:        #0C447C;
+  --success-bg:        #E1F5EE;
+  --success-text:      #085041;
+  --progress-design:   #185FA5;
+  --progress-survey:   #1D9E75;
+  --progress-expert:   #D85A30;
 }
 
 body {
@@ -64,11 +79,22 @@ body {
 /* BrutalType heading */
 .brutal { font-family: 'BrutalType', sans-serif; }
 
+/* Badges */
+.badge-blue    { background: var(--badge-bg); color: var(--badge-text); }
+.badge-success { background: var(--success-bg); color: var(--success-text); }
+
+/* Card */
+.card-light {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: 12px;
+}
+
 /* Select / input light style */
 .input-light {
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
   padding: 6px 12px;
   font-size: 13px;
   color: var(--text-primary);
