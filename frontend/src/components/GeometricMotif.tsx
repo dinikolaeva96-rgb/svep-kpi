@@ -30,15 +30,19 @@ const POSITION: Record<GeometricMotifProps['variant'], React.CSSProperties> = {
 }
 
 /* Asymmetric 9-point outer contour, clockwise from upper-left vertex */
-const POINTS = '28,2 72,8 88,28 82,72 62,95 35,90 8,68 2,42 12,18'
+const POINTS = '20.8,33 49.6,16.5 78.9,16.7 65.5,50.1 79.1,83 49.8,83.5 21.1,67.1'
 
 const DIAGONALS: [string, string][] = [
-  ['28,2',  '82,72'],
-  ['72,8',  '8,68'],
-  ['2,42',  '62,95'],
-  ['12,18', '88,28'],
-  ['35,90', '88,28'],
-  ['2,42',  '88,28'],
+  ['20.8,33',  '49.8,83.5'],
+  ['20.8,33',  '79.1,83'],
+  ['20.8,33',  '78.9,16.7'],
+  ['21.1,67.1','79.1,83'],
+  ['21.1,67.1','78.9,16.7'],
+  ['21.1,67.1','49.6,16.5'],
+  ['49.8,83.5','65.5,50.1'],
+  ['49.8,83.5','78.9,16.7'],
+  ['79.1,83',  '49.6,16.5'],
+  ['65.5,50.1','49.6,16.5'],
 ]
 
 export default function GeometricMotif({ variant, className }: GeometricMotifProps) {
