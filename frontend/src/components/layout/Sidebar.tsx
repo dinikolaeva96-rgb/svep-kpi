@@ -121,7 +121,9 @@ export default function Sidebar({ collapsed, onToggle, alertCount }: SidebarProp
       style={{
         position: 'fixed', top: 0, left: 0, bottom: 0,
         width: W, zIndex: 40,
-        background: '#0D1B2A',
+        background: 'rgba(10,22,40,0.85)',
+        WebkitBackdropFilter: 'blur(20px)',
+        backdropFilter: 'blur(20px)',
         borderRight: '1px solid rgba(255,255,255,0.06)',
         display: 'flex', flexDirection: 'column',
         transition: 'width 0.22s cubic-bezier(0.4,0,0.2,1)',

@@ -107,14 +107,61 @@ body {
 .cell-red    { background: #FCEAEA; color: #C53C3C; }
 .cell-nodata { background: #F3F4F6; color: #9CA3AF; }
 
-/* Signature crystal rotation — Hero decorative element */
+/* Crystal rotation variants */
 @keyframes crystal-spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
-.crystal-spin {
-  animation: crystal-spin 40s linear infinite;
+@keyframes crystal-spin-rev {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
 }
-.crystal-spin:hover {
+.crystal-spin     { animation: crystal-spin 40s linear infinite; }
+.crystal-spin-60  { animation: crystal-spin 60s linear infinite; }
+.crystal-spin-80  { animation: crystal-spin 80s linear infinite; }
+.crystal-spin-rev { animation: crystal-spin-rev 60s linear infinite; }
+.crystal-group:hover .crystal-spin,
+.crystal-group:hover .crystal-spin-60,
+.crystal-group:hover .crystal-spin-80,
+.crystal-group:hover .crystal-spin-rev {
   animation-play-state: paused;
+  filter: drop-shadow(0 0 24px rgba(33,150,201,0.7));
 }
+
+/* Mesh gradient blobs */
+@keyframes mesh-float-1 {
+  0%,100% { transform: translate(0,0); }
+  33%     { transform: translate(40px,-50px); }
+  66%     { transform: translate(-30px,30px); }
+}
+@keyframes mesh-float-2 {
+  0%,100% { transform: translate(0,0); }
+  40%     { transform: translate(-60px,40px); }
+  70%     { transform: translate(50px,-30px); }
+}
+@keyframes mesh-float-3 {
+  0%,100% { transform: translate(0,0); }
+  50%     { transform: translate(30px,50px); }
+}
+
+/* LIVE pulse dot */
+@keyframes live-pulse {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50%     { transform: scale(1.4); opacity: 0.6; }
+}
+.live-dot { animation: live-pulse 2s ease-in-out infinite; }
+
+/* Staggered card entrance */
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.card-enter { animation: card-in 0.5s cubic-bezier(0.4,0,0.2,1) both; }
+
+/* Progress bar fill */
+@keyframes bar-fill { from { width: 0 !important; } }
+.bar-animated { animation: bar-fill 1s cubic-bezier(0.4,0,0.2,1) both; }
+
+/* Dark scrollbar */
+::-webkit-scrollbar       { width: 6px; background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }

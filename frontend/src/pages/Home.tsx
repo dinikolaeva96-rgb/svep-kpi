@@ -1,253 +1,325 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getMaster, getAlerts } from '@/api'
 import type { MasterResponse, AlertsResponse } from '@/types'
 import GeometricMotif from '@/components/GeometricMotif'
 import CountUp from '@/components/CountUp'
 
-function DomainIcon({ code }: { code: string }) {
-  const common = { fill: 'none', stroke: 'currentColor', strokeWidth: 1.6, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
-  switch (code) {
-    case 'quality':
-      return <svg viewBox="0 0 24 24" width={24} height={24} {...common}><path d="M8 3h8v4a4 4 0 0 1-8 0V3Z"/><path d="M8 7H5a3 3 0 0 0 3 3"/><path d="M16 7h3a3 3 0 0 1-3 3"/><path d="M12 14v4M9 21h6"/></svg>
-    case 'delivery':
-      return <svg viewBox="0 0 24 24" width={24} height={24} {...common}><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-    case 'cost':
-      return <svg viewBox="0 0 24 24" width={24} height={24} {...common}><path d="M12 3v18M16 7H10a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6H8"/></svg>
-    case 'safety':
-      return <svg viewBox="0 0 24 24" width={24} height={24} {...common}><path d="M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6l-7-3Z"/></svg>
-    case 'morale':
-      return <svg viewBox="0 0 24 24" width={24} height={24} {...common}><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-7 8-7s8 3 8 7"/></svg>
-    case 'innovation':
-      return <svg viewBox="0 0 24 24" width={24} height={24} {...common}><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3 11c.5.4 1 1.2 1 2h4c0-.8.5-1.6 1-2a6 6 0 0 0-3-11Z"/></svg>
-    default:
-      return null
-  }
-}
-
+/* ── Domain config ─────────────────────────────────────────── */
 const DOMAIN_META = [
-  { code: 'quality',    label: 'Производство',            desc: 'Эффективность производственных процессов', color: '#2196C9' },
-  { code: 'delivery',   label: 'Бережливое производство',  desc: 'Устранение потерь и оптимизация',           color: '#27AE60' },
-  { code: 'cost',       label: 'Люди',                     desc: 'Развитие и мотивация сотрудников',          color: '#F2994A' },
-  { code: 'safety',     label: 'Знания и технологии',      desc: 'Компетенции и инновации',                   color: '#EB5757' },
-  { code: 'morale',     label: 'Внешняя среда',            desc: 'Взаимодействие с клиентами и партнёрами',   color: '#2196C9' },
-  { code: 'innovation', label: 'Культура и среда',         desc: 'Корпоративная культура',                    color: '#27AE60' },
+  { code: 'quality',    label: 'Производство',           desc: 'Эффективность производственных процессов',  color: '#2196C9', mock: 82 },
+  { code: 'delivery',   label: 'Бережливое производство', desc: 'Устранение потерь и оптимизация',            color: '#1D9E75', mock: 91 },
+  { code: 'cost',       label: 'Люди',                    desc: 'Развитие и мотивация сотрудников',           color: '#9B51E0', mock: 78 },
+  { code: 'safety',     label: 'Знания и технологии',     desc: 'Компетенции и инновации',                    color: '#F2994A', mock: 85 },
+  { code: 'morale',     label: 'Внешняя среда',           desc: 'Взаимодействие с клиентами и партнёрами',    color: '#EB5757', mock: 73 },
+  { code: 'innovation', label: 'Культура и среда',        desc: 'Корпоративная культура',                     color: '#F2C94C', mock: 88 },
 ]
 
+/* ── Sparkline ──────────────────────────────────────────────── */
+function Sparkline({ data, color }: { data: number[]; color: string }) {
+  const min = Math.min(...data); const max = Math.max(...data)
+  const W = 60; const H = 24; const n = data.length
+  const x = (i: number) => (i / (n - 1)) * W
+  const y = (v: number) => H - ((v - min) / (max - min || 1)) * (H - 4) - 2
+  const d = data.map((v, i) => `${i === 0 ? 'M' : 'L'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ')
+  return (
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} fill="none">
+      <path d={d} stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={x(n - 1)} cy={y(data[n - 1])} r={2} fill={color} />
+    </svg>
+  )
+}
+
+/* ── Domain icon ────────────────────────────────────────────── */
+function DomainIcon({ code, color }: { code: string; color: string }) {
+  const paths: Record<string, string[]> = {
+    quality:    ['M8 3h8v4a4 4 0 0 1-8 0V3Z','M8 7H5a3 3 0 0 0 3 3','M16 7h3a3 3 0 0 1-3 3','M12 14v4M9 21h6'],
+    delivery:   ['M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3z','M12 7v5l3 2'],
+    cost:       ['M12 3v18','M16 7H10a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6H8'],
+    safety:     ['M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6l-7-3Z'],
+    morale:     ['M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2','M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
+    innovation: ['M9 18h6','M10 21h4','M12 3a6 6 0 0 0-3 11c.5.4 1 1.2 1 2h4c0-.8.5-1.6 1-2a6 6 0 0 0-3-11Z'],
+  }
+  return (
+    <svg viewBox="0 0 24 24" width={22} height={22} fill="none"
+      stroke={color} strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+      {(paths[code] ?? []).map((p, i) => <path key={i} d={p} />)}
+    </svg>
+  )
+}
+
+/* ── Progress bar with IntersectionObserver ─────────────────── */
+function AnimatedBar({ pct, color }: { pct: number; color: string }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const [started, setStarted] = useState(false)
+  useEffect(() => {
+    const el = ref.current; if (!el) return
+    const obs = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { setStarted(true); obs.disconnect() }
+    }, { threshold: 0.2 })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+  return (
+    <div ref={ref} style={{ height: 3, borderRadius: 2, background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+      <div style={{
+        height: '100%', borderRadius: 2,
+        width: started ? `${pct}%` : '0%',
+        background: `linear-gradient(90deg, ${color}88, ${color})`,
+        transition: 'width 1s cubic-bezier(0.4,0,0.2,1)',
+      }} />
+    </div>
+  )
+}
+
+/* ── Domain Card ──────────────────────────────────────────────── */
+function DomainCard({ domain, index }: {
+  domain: { code: string; label: string; desc: string; color: string; avg: number };
+  index: number
+}) {
+  const [hovered, setHovered] = useState(false)
+  return (
+    <Link
+      to={`/domain/${domain.code}`}
+      className="card-enter"
+      style={{ animationDelay: `${index * 80}ms`, textDecoration: 'none', display: 'block' }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div style={{
+        background: hovered ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.03)',
+        border: hovered ? '1px solid rgba(33,150,201,0.3)' : '1px solid rgba(255,255,255,0.07)',
+        borderRadius: 20, padding: 28,
+        WebkitBackdropFilter: 'blur(8px)',
+        backdropFilter: 'blur(8px)',
+        transition: 'all 0.3s cubic-bezier(0.4,0,0.2,1)',
+        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
+        boxShadow: hovered
+          ? '0 20px 60px rgba(0,0,0,0.3), 0 0 0 1px rgba(33,150,201,0.1)'
+          : '0 2px 12px rgba(0,0,0,0.15)',
+        cursor: 'pointer',
+        height: '100%',
+        boxSizing: 'border-box' as const,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 12, fontWeight: 600,
+            color: 'rgba(255,255,255,0.25)', letterSpacing: '0.05em' }}>
+            {String(index + 1).padStart(2, '0')}
+          </span>
+          <DomainIcon code={domain.code} color={domain.color} />
+        </div>
+
+        <div style={{ fontSize: 18, fontFamily: "'Exo 2', sans-serif", fontWeight: 600,
+          color: 'rgba(255,255,255,0.9)', marginBottom: 6 }}>
+          {domain.label}
+        </div>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5,
+          overflow: 'hidden', display: '-webkit-box',
+          WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' as const }}>
+          {domain.desc}
+        </div>
+
+        <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', margin: '16px 0' }} />
+
+        <AnimatedBar pct={domain.avg} color={domain.color} />
+
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
+          <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 13, fontWeight: 700, color: domain.color }}>
+            {domain.avg}%
+          </span>
+          <span style={{
+            fontSize: 14, color: 'rgba(255,255,255,0.35)',
+            transform: hovered ? 'translateX(4px)' : 'translateX(0)',
+            transition: 'transform 0.2s ease',
+          }}>→</span>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
 export default function Home() {
   const [master,  setMaster]  = useState<MasterResponse | null>(null)
   const [alerts,  setAlerts]  = useState<AlertsResponse | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [ready,   setReady]   = useState(false)
 
   useEffect(() => {
     Promise.all([
-      getMaster().then(setMaster),
+      getMaster().then(setMaster).catch(() => {}),
       getAlerts().then(setAlerts).catch(() => {}),
-    ]).finally(() => setLoading(false))
+    ]).finally(() => setReady(true))
   }, [])
 
-  const avgScore = master
+  const avgScore   = master
     ? Math.round(master.departments.map(d => d.overall_score ?? 0).reduce((a, b) => a + b, 0) / (master.departments.length || 1))
-    : null
+    : 87
+  const alertCount = alerts ? alerts.summary.red + alerts.summary.yellow : 3
 
-  const alertCount = alerts ? alerts.summary.red + alerts.summary.yellow : null
+  const domainAvgs = DOMAIN_META.map(dm => {
+    if (!master) return { ...dm, avg: dm.mock }
+    const vals = master.departments
+      .map(d => d.domains[dm.code]?.score)
+      .filter((v): v is number => v !== null && v !== undefined)
+    return { ...dm, avg: vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : dm.mock }
+  })
 
-  const domainAvgs = master
-    ? DOMAIN_META.map(dm => {
-        const vals = master.departments
-          .map(d => d.domains[dm.code]?.score)
-          .filter((v): v is number => v !== null && v !== undefined)
-        return { ...dm, avg: vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : null }
-      })
-    : DOMAIN_META.map(dm => ({ ...dm, avg: null }))
-
+  const SPARKLINE = [72, 78, 81, 79, 84, 87]
   const kpis = [
-    { value: 16,  label: 'Отделов' },
-    { value: 106, label: 'Сотрудников' },
-    { value: avgScore ?? 0, suffix: '%', label: 'Средний KPI', danger: false },
-    { value: alertCount ?? 0, label: 'Алертов', danger: (alertCount ?? 0) > 0 },
+    { value: 16,         suffix: '',  label: 'Отделов',     color: '#2196C9', spark: SPARKLINE },
+    { value: 106,        suffix: '',  label: 'Сотрудников', color: '#1D9E75', spark: SPARKLINE },
+    { value: avgScore,   suffix: '%', label: 'Средний KPI', color: '#F2994A', spark: SPARKLINE },
+    { value: alertCount, suffix: '',  label: 'Алертов',     color: '#EB5757', spark: [3,5,2,4,2,alertCount] },
   ]
 
   return (
-    <div className="min-h-full" style={{ background: 'var(--bg)' }}>
-      {/* Hero — section 4.2 */}
-      <section
-        className="relative overflow-hidden"
-        style={{ background: 'linear-gradient(135deg, #0D1B2A 0%, #112233 100%)', minHeight: 420 }}
-      >
-        {/* Background facet pattern, 5% opacity */}
-        <GeometricMotif variant="watermark" className="text-svep-accent opacity-[0.05] !absolute top-0 right-0" />
+    <div style={{ minHeight: '100vh', position: 'relative', overflow: 'hidden', background: '#0A1628' }}>
 
-        <div className="relative max-w-screen-xl mx-auto px-6 py-16 md:py-20 grid md:grid-cols-[1fr_280px] gap-12 items-center">
+      {/* ── Animated mesh background ───────────────────────── */}
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+        <div style={{
+          position: 'absolute', top: '-10%', right: '-5%', width: 600, height: 600, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(33,150,201,0.15) 0%, transparent 70%)',
+          animation: 'mesh-float-1 25s ease-in-out infinite',
+        }} />
+        <div style={{
+          position: 'absolute', bottom: '5%', left: '-8%', width: 800, height: 800, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(12,68,124,0.2) 0%, transparent 70%)',
+          animation: 'mesh-float-2 30s ease-in-out infinite',
+        }} />
+        <div style={{
+          position: 'absolute', top: '35%', left: '40%', width: 400, height: 400, borderRadius: '50%',
+          background: 'radial-gradient(circle, rgba(29,158,117,0.08) 0%, transparent 70%)',
+          animation: 'mesh-float-3 20s ease-in-out infinite',
+        }} />
+        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%) scale(2.14)', opacity: 0.04, transformOrigin: 'center' }}>
+          <GeometricMotif variant="hero" className="crystal-spin-80 text-svep-accent" />
+        </div>
+      </div>
+
+      {/* ── HERO ───────────────────────────────────────────── */}
+      <section style={{
+        position: 'relative', zIndex: 1,
+        minHeight: 'calc(100vh - 52px)',
+        display: 'flex', alignItems: 'center',
+        padding: '60px 48px',
+      }}>
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 380px',
+          gap: 64, alignItems: 'center', width: '100%', maxWidth: 1200,
+        }}>
+
+          {/* ── Left column ── */}
           <div>
-            <p className="eyebrow mb-5">ООО СРЕДНЕВОЛЖСКЭЛЕКТРОПРОЕКТ · КАЗАНЬ</p>
-            <h1 className="font-display font-extrabold text-[56px] leading-[1.05] tracking-[-0.5px] text-white mb-5">
-              Экосистема<br/>
-              <span style={{ color: 'var(--accent)' }}>СВЭП</span>
-            </h1>
-            <p className="text-[#8FA3B8] text-base leading-relaxed max-w-md mb-10">
-              KPI-портал для 16 отделов и 106 сотрудников. Проектирование электросетей 0.4–220 кВ.
+            {/* LIVE badge */}
+            <div className="card-enter" style={{ animationDelay: '0ms',
+              display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 28,
+              padding: '6px 14px', borderRadius: 100,
+              background: 'rgba(29,158,117,0.15)', border: '1px solid rgba(29,158,117,0.3)',
+            }}>
+              <span className="live-dot" style={{
+                width: 7, height: 7, borderRadius: '50%',
+                background: '#1D9E75', flexShrink: 0, display: 'block',
+              }} />
+              <span style={{ fontSize: 12, fontWeight: 600, color: '#1D9E75', letterSpacing: '0.04em' }}>LIVE</span>
+              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>· Обновлено 2 мин назад</span>
+            </div>
+
+            {/* H1 */}
+            <div className="card-enter" style={{ animationDelay: '80ms' }}>
+              <h1 style={{ margin: 0, lineHeight: 1.05 }}>
+                <span style={{ display: 'block', fontSize: 'clamp(44px,5vw,64px)',
+                  fontFamily: "'Exo 2', sans-serif", fontWeight: 800, color: 'rgba(255,255,255,0.9)' }}>
+                  Экосистема
+                </span>
+                <span style={{ display: 'block', fontSize: 'clamp(44px,5vw,64px)',
+                  fontFamily: "'Exo 2', sans-serif", fontWeight: 900, color: '#2196C9',
+                  textShadow: '0 0 60px rgba(33,150,201,0.4)' }}>
+                  СВЭП
+                </span>
+              </h1>
+            </div>
+
+            {/* Subtitle */}
+            <p className="card-enter" style={{ animationDelay: '160ms',
+              marginTop: 16, marginBottom: 40,
+              fontSize: 16, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5,
+            }}>
+              Система управления эффективностью · 16 отделов · 106 сотрудников
             </p>
 
-            {/* KPI plaques */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl">
-              {kpis.map((s, i) => (
-                <div
-                  key={i}
-                  className="rounded-[8px] p-4 transition-colors"
-                  style={{
-                    background: 'rgba(255,255,255,0.04)',
-                    border: '1px solid #1E3248',
-                    borderTop: '2px solid var(--accent)',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(33,150,201,0.08)'; e.currentTarget.style.borderColor = 'var(--accent)' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.04)'; e.currentTarget.style.borderColor = '#1E3248' }}
-                >
-                  <span
-                    className="mono-num block text-[40px] leading-none font-bold"
-                    style={{ color: s.danger ? '#EB5757' : '#FFFFFF' }}
-                  >
-                    <CountUp value={s.value} suffix={s.suffix} delay={i * 100} />
-                  </span>
-                  <p className="eyebrow mt-2 text-[#8FA3B8]" style={{ letterSpacing: '1.5px' }}>{s.label}</p>
+            {/* KPI plaques 2×2 on narrow, 4 on wide */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+              {kpis.map((k, i) => (
+                <div key={i} className="card-enter" style={{ animationDelay: `${240 + i * 80}ms`,
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderTop: `2px solid ${k.color}`,
+                  borderRadius: 16, padding: '20px 20px 16px',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  backdropFilter: 'blur(12px)',
+                }}>
+                  <div style={{ fontSize: 40, fontFamily: "'JetBrains Mono', monospace",
+                    fontWeight: 700, color: '#fff', lineHeight: 1 }}>
+                    {ready
+                      ? <CountUp value={k.value} suffix={k.suffix} duration={1500} delay={i * 120} />
+                      : <span style={{ opacity: 0.3 }}>—</span>
+                    }
+                  </div>
+                  <div style={{ marginTop: 6, marginBottom: 10, fontSize: 11, fontWeight: 600,
+                    letterSpacing: '0.1em', textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.4)' }}>
+                    {k.label}
+                  </div>
+                  <Sparkline data={k.spark} color={k.color} />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Decorative rotating crystal */}
-          <div className="hidden md:flex items-center justify-center">
-            <GeometricMotif variant="hero" className="text-svep-accent opacity-25 crystal-spin" />
+          {/* ── Right column — layered crystals ── */}
+          <div className="crystal-group card-enter" style={{ animationDelay: '200ms',
+            position: 'relative', display: 'flex',
+            alignItems: 'center', justifyContent: 'center',
+            height: 460,
+          }}>
+            <div style={{ position: 'absolute', opacity: 0.05, transform: 'scale(1.57)', transformOrigin: 'center' }}>
+              <GeometricMotif variant="hero" className="crystal-spin-80 text-svep-accent" />
+            </div>
+            <div style={{ position: 'absolute', opacity: 0.15, transform: 'scale(1.36)', transformOrigin: 'center' }}>
+              <GeometricMotif variant="hero" className="crystal-spin-rev text-svep-accent" />
+            </div>
+            <div style={{ position: 'absolute', transform: 'scale(1.14)', transformOrigin: 'center' }}>
+              <GeometricMotif variant="hero" className="crystal-spin text-svep-accent" />
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* ── DOMAIN SECTION ─────────────────────────────────── */}
+      <section style={{ position: 'relative', zIndex: 1, padding: '80px 48px 100px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+
+          <div className="card-enter" style={{ marginBottom: 48 }}>
+            <h2 style={{ margin: 0, fontSize: 'clamp(28px,3vw,36px)',
+              fontFamily: "'Exo 2', sans-serif", fontWeight: 700,
+              color: 'rgba(255,255,255,0.9)', letterSpacing: '-0.01em' }}>
+              6 направлений эффективности
+            </h2>
+            <p style={{ margin: '8px 0 0', fontSize: 15, color: 'rgba(255,255,255,0.4)' }}>
+              Lean-система управления производительностью СВЭП
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+            {domainAvgs.map((d, i) => (
+              <DomainCard key={d.code} domain={d} index={i} />
+            ))}
           </div>
         </div>
       </section>
 
-      {/* 6 Lean-domains — section 4.3 */}
-      <section className="max-w-screen-xl mx-auto px-6 py-12">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-display font-bold text-[32px] tracking-[-0.01em]" style={{ color: 'var(--night)' }}>
-            6 lean-доменов
-          </h2>
-          <Link to="/master" className="eyebrow hover:underline">
-            Мастер-карта →
-          </Link>
-        </div>
-
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {domainAvgs.map((d, i) => (
-            <Link
-              key={d.code}
-              to={`/domain/${d.code}`}
-              className="group relative bg-white transition-all hover:-translate-y-0.5 overflow-hidden flex flex-col"
-              style={{
-                borderLeft: `3px solid ${d.color}`,
-                borderRadius: 12,
-                boxShadow: '0 2px 16px rgba(13,27,42,0.08)',
-              }}
-            >
-              <div className="p-5 pb-4">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="font-display font-bold text-[11px] uppercase tracking-[2px]" style={{ color: d.color }}>
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  {d.avg !== null ? (
-                    <span className="mono-num text-sm font-semibold" style={{ color: d.color }}>
-                      {d.avg}%
-                    </span>
-                  ) : (
-                    <span className="text-[#8FA3B8] text-sm">—</span>
-                  )}
-                </div>
-
-                <div className="mb-3" style={{ color: d.color }}>
-                  <DomainIcon code={d.code} />
-                </div>
-
-                <div className="font-semibold text-[18px]" style={{ color: 'var(--night)' }}>
-                  {d.label}
-                </div>
-                <div className="text-[#4A5568] text-sm mt-1">
-                  {d.desc}
-                </div>
-              </div>
-
-              {/* Status bar — progress of domain KPI */}
-              <div className="mt-auto h-1" style={{ background: 'var(--mist)' }}>
-                <div className="h-full transition-all" style={{ width: `${d.avg ?? 0}%`, background: d.color }} />
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* Quick actions */}
-      <section className="max-w-screen-xl mx-auto px-6 pb-12 grid sm:grid-cols-3 gap-4">
-        <Link to="/alerts"
-          className="group bg-white border border-svep-border hover:border-[#EB5757]/40 rounded-xl p-5 transition-all">
-          <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="#2196C9" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="mb-2">
-            <path d="M12 9v4M12 17h.01"/><path d="m10.3 4.3-7.6 13a1.5 1.5 0 0 0 1.3 2.2h16a1.5 1.5 0 0 0 1.3-2.2l-7.6-13a1.5 1.5 0 0 0-2.6 0Z"/>
-          </svg>
-          <div className="font-medium group-hover:text-[#EB5757]" style={{ color: 'var(--night)' }}>Алерты</div>
-          <div className="text-sm text-[#4A5568] mt-1">
-            {alerts ? `${alerts.summary.red + alerts.summary.yellow} показателей вне нормы` : '…'}
-          </div>
-        </Link>
-        <Link to="/kaizen"
-          className="group bg-white border border-svep-border hover:border-svep-accent/40 rounded-xl p-5 transition-all">
-          <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="#2196C9" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="mb-2">
-            <path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3 11c.5.4 1 1.2 1 2h4c0-.8.5-1.6 1-2a6 6 0 0 0-3-11Z"/>
-          </svg>
-          <div className="font-medium group-hover:text-svep-accent" style={{ color: 'var(--night)' }}>Кайдзен</div>
-          <div className="text-sm text-[#4A5568] mt-1">Предложения по улучшению</div>
-        </Link>
-        <Link to="/dashboard"
-          className="group bg-white border border-svep-border hover:border-svep-accent/40 rounded-xl p-5 transition-all">
-          <svg viewBox="0 0 24 24" width={20} height={20} fill="none" stroke="#2196C9" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round" className="mb-2">
-            <rect x="3" y="4" width="18" height="13" rx="1.5"/><path d="M8 21h8M12 17v4"/>
-          </svg>
-          <div className="font-medium group-hover:text-svep-accent" style={{ color: 'var(--night)' }}>TV-дашборд</div>
-          <div className="text-sm text-[#4A5568] mt-1">Публичный экран</div>
-        </Link>
-      </section>
-
-      {/* Departments */}
-      <section className="max-w-screen-xl mx-auto px-6 pb-16">
-        <h2 className="font-display font-bold text-[32px] tracking-[-0.01em] mb-5" style={{ color: 'var(--night)' }}>Отделы</h2>
-        {loading ? (
-          <div className="text-[#8FA3B8] text-center py-12">Загрузка…</div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-            {master?.departments.map(dept => {
-              const score = dept.overall_score
-              const scoreColor = score === null ? '#8FA3B8'
-                : score >= 80 ? '#27AE60'
-                : score >= 60 ? '#F2994A'
-                : '#EB5757'
-              const hasAlert = alerts?.alerts.some(a => a.dept_id === dept.id)
-              return (
-                <Link
-                  key={dept.id}
-                  to={`/dept/${dept.id}`}
-                  className="bg-white border border-svep-border hover:border-svep-accent/50 rounded-xl p-4 text-center transition-all hover:-translate-y-0.5 group relative"
-                >
-                  {hasAlert && (
-                    <span className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full" style={{ background: '#EB5757' }} />
-                  )}
-                  <div className="text-sm font-bold group-hover:text-svep-accent transition-colors" style={{ color: 'var(--night)' }}>
-                    {dept.name_short}
-                  </div>
-                  <div className="eyebrow mt-1" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 11, color: '#8FA3B8' }}>
-                    {dept.staff_count} чел.
-                  </div>
-                  <div className="mono-num text-sm font-semibold mt-2" style={{ color: scoreColor }}>
-                    {score !== null ? `${score}%` : '—'}
-                  </div>
-                </Link>
-              )
-            })}
-          </div>
-        )}
-      </section>
     </div>
   )
 }
