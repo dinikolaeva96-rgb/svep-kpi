@@ -151,9 +151,11 @@ export default function Home() {
     ]).finally(() => setReady(true))
   }, [])
 
-  const avgScore   = master
+  const deptCount  = master ? master.departments.length : 15
+  const avgScoreRaw = master
     ? Math.round(master.departments.map(d => d.overall_score ?? 0).reduce((a, b) => a + b, 0) / (master.departments.length || 1))
-    : 87
+    : 0
+  const avgScore   = avgScoreRaw > 0 ? avgScoreRaw : 87
   const alertCount = alerts ? alerts.summary.red + alerts.summary.yellow : 3
 
   const domainAvgs = DOMAIN_META.map(dm => {
@@ -166,10 +168,10 @@ export default function Home() {
 
   const SPARKLINE = [72, 78, 81, 79, 84, 87]
   const kpis = [
-    { value: 16,         suffix: '',  label: 'Отделов',     color: '#2196C9', spark: SPARKLINE },
+    { value: deptCount,  suffix: '',  label: 'Отделов',     color: '#2196C9', spark: SPARKLINE },
     { value: 106,        suffix: '',  label: 'Сотрудников', color: '#1D9E75', spark: SPARKLINE },
     { value: avgScore,   suffix: '%', label: 'Средний KPI', color: '#F2994A', spark: SPARKLINE },
-    { value: alertCount, suffix: '',  label: 'Алертов',     color: '#EB5757', spark: [3,5,2,4,2,alertCount] },
+    { value: alertCount, suffix: '',  label: 'Сигналов',    color: '#EB5757', spark: [3,5,2,4,2,alertCount] },
   ]
 
   return (
@@ -245,7 +247,7 @@ export default function Home() {
               marginTop: 16, marginBottom: 40,
               fontSize: 16, color: '#4A6580', lineHeight: 1.5,
             }}>
-              Система управления эффективностью · 16 отделов · 106 сотрудников
+              Система управления эффективностью · {deptCount} отделов · 106 сотрудников
             </p>
 
             {/* KPI plaques */}
