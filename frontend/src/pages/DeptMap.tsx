@@ -58,7 +58,7 @@ export default function DeptMap() {
   })
 
   return (
-    <div className="pt-16 bg-svep-bg min-h-screen">
+    <div className="bg-svep-bg min-h-full">
       <div className="max-w-screen-xl mx-auto px-4 pb-12">
         {/* Заголовок */}
         <div className="flex flex-wrap items-start justify-between gap-4 py-6">

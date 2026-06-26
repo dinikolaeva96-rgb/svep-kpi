@@ -69,7 +69,7 @@ export default function Home() {
   ]
 
   return (
-    <div className="pt-16 min-h-screen" style={{ background: 'var(--bg)' }}>
+    <div className="min-h-full" style={{ background: 'var(--bg)' }}>
       {/* Hero — section 4.2 */}
       <section
         className="relative overflow-hidden"

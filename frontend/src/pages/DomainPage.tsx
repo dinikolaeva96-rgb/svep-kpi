@@ -21,7 +21,7 @@ export default function DomainPage() {
     : []
 
   return (
-    <div className="pt-20 px-4 max-w-screen-xl mx-auto pb-12">
+    <div className="px-4 max-w-screen-xl mx-auto pb-12 pt-6">
       <div className="py-6">
         <div className="text-gray-500 text-sm mb-2">
           <Link to="/" className="hover:text-gray-300">Экосистема</Link> / Домен

@@ -83,7 +83,7 @@ export default function Dashboard() {
   const chartTrends = trends.map(t => ({ name: t.label, score: t.score }))
 
   return (
-    <div className={`bg-svep-bg flex flex-col ${tvMode ? 'fixed inset-0 z-[100]' : 'min-h-screen pt-16'}`}>
+    <div className={`bg-svep-bg flex flex-col ${tvMode ? 'fixed inset-0 z-[100]' : 'min-h-full'}`}>
       <header className="flex items-center justify-between px-6 py-3 bg-svep-surface border-b border-svep-border shrink-0">
         <div className="flex items-center gap-3">
           <div>

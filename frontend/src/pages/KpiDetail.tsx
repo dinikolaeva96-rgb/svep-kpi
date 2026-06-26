@@ -51,7 +51,7 @@ export default function KpiDetail() {
   const last = history[history.length - 1]
 
   return (
-    <div className="pt-20 px-4 max-w-screen-xl mx-auto pb-12 bg-svep-bg min-h-screen">
+    <div className="px-4 max-w-screen-xl mx-auto pb-12 pt-6 bg-svep-bg">
       <div className="py-6">
         <div className="text-svep-tertiary text-sm mb-2 flex items-center gap-1">
           <Link to="/" className="hover:text-svep-accent">Экосистема</Link>

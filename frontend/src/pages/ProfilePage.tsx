@@ -50,7 +50,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="pt-20 px-4 max-w-2xl mx-auto pb-12 bg-svep-bg min-h-screen">
+    <div className="px-4 max-w-2xl mx-auto pb-12 pt-6 bg-svep-bg">
       <div className="py-6">
         <h1 className="font-brutal font-extrabold text-2xl text-svep-primary">Профиль</h1>
       </div>

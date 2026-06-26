@@ -33,7 +33,7 @@ export default function AdminPage() {
   const availableTabs = TABS.filter(t => ROLE_LEVELS[user.role] >= ROLE_LEVELS[t.minRole])
 
   return (
-    <div className="pt-16 bg-svep-bg min-h-screen">
+    <div className="bg-svep-bg min-h-full">
       <div className="max-w-screen-xl mx-auto px-4 pb-12">
         <div className="py-6 flex items-center justify-between flex-wrap gap-4">
           <div>
