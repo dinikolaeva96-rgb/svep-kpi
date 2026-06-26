@@ -2,221 +2,312 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getAlerts } from '@/api'
 import type { AlertsResponse, AlertItem } from '@/types'
-import PeriodPicker from '@/components/ui/PeriodPicker'
-import TrendBadge   from '@/components/ui/TrendBadge'
-import Skeleton     from '@/components/ui/Skeleton'
 
-function StatusDot({ status }: { status: 'red' | 'yellow' }) {
+/* ── Mock data ──────────────────────────────────────────────── */
+const MOCK_ALERTS: AlertItem[] = [
+  {
+    indicator_id: 2, dept_id: 1, dept_name: 'ОВЛ',
+    domain_code: 'delivery', domain_name: 'Сроки', domain_color: '#1D9E75', domain_icon: '⏱',
+    code: 'OVL_on_time_rate', name: 'Соблюдение сроков', unit: '%',
+    actual: 72, plan: 90, target: 90, warning_thr: 85, critical_thr: 75, weight: 1,
+    comment: null, status: 'red', trend: 'down', prev_actual: 79,
+  },
+  {
+    indicator_id: 13, dept_id: 3, dept_name: 'ОПС',
+    domain_code: 'quality', domain_name: 'Качество', domain_color: '#2196C9', domain_icon: '🏆',
+    code: 'OPS_quality_score', name: 'Индекс качества', unit: '%',
+    actual: 88, plan: 95, target: 95, warning_thr: 90, critical_thr: 80, weight: 1,
+    comment: null, status: 'yellow', trend: 'stable', prev_actual: 87,
+  },
+  {
+    indicator_id: 54, dept_id: 9, dept_name: 'ТО',
+    domain_code: 'innovation', domain_name: 'Инновации', domain_color: '#F2C94C', domain_icon: '💡',
+    code: 'TO_kaizen_count', name: 'Кайдзен-предложения', unit: 'шт',
+    actual: 1, plan: 3, target: 3, warning_thr: 2, critical_thr: 1, weight: 1,
+    comment: null, status: 'yellow', trend: 'down', prev_actual: 2,
+  },
+]
+
+type FilterTab = 'all' | 'red' | 'yellow' | 'resolved'
+
+const MONTHS = ['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек']
+
+/* ── Status border colour ───────────────────────────────────── */
+function statusColor(s: string) {
+  return s === 'red' ? '#EB5757' : '#F2994A'
+}
+
+/* ── Progress bar ───────────────────────────────────────────── */
+function MiniProgress({ actual, plan, status }: { actual: number; plan: number; status: string }) {
+  const pct = Math.min(Math.round((actual / plan) * 100), 100)
   return (
-    <span className={`inline-block w-2 h-2 rounded-full ${status === 'red' ? 'bg-red-500' : 'bg-yellow-500'}`} />
+    <div style={{ height: 4, borderRadius: 2, background: '#F0F4F8', overflow: 'hidden', marginTop: 10 }}>
+      <div style={{
+        height: '100%', borderRadius: 2,
+        width: `${pct}%`,
+        background: statusColor(status),
+        transition: 'width 0.6s ease',
+      }} />
+    </div>
   )
 }
 
-function pctOf(actual: number | null, target: number): number | null {
-  if (actual == null || target === 0) return null
-  return Math.round(actual / target * 100)
+/* ── Signal card ────────────────────────────────────────────── */
+function SignalCard({ alert, month, year }: { alert: AlertItem; month: number; year: number }) {
+  const deviation = alert.plan
+    ? Math.round(((alert.actual ?? 0) - alert.plan) / alert.plan * 100)
+    : null
+  const devStr = deviation !== null
+    ? (deviation >= 0 ? `+${deviation}%` : `${deviation}%`)
+    : null
+
+  return (
+    <div style={{
+      background: '#fff',
+      borderRadius: 12,
+      borderLeft: `3px solid ${statusColor(alert.status)}`,
+      padding: '20px 24px',
+      boxShadow: '0 1px 8px rgba(0,0,0,0.06)',
+      transition: 'box-shadow 0.2s ease',
+    }}
+      onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)')}
+      onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 1px 8px rgba(0,0,0,0.06)')}
+    >
+      {/* Top row */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+        <span style={{
+          width: 8, height: 8, borderRadius: '50%',
+          background: statusColor(alert.status), flexShrink: 0, display: 'inline-block',
+        }} />
+        <Link to={`/dept/${alert.dept_id}`} style={{
+          fontSize: 13, fontWeight: 600, color: '#1C84C6', textDecoration: 'none',
+        }}
+          onClick={e => e.stopPropagation()}>
+          {alert.dept_name}
+        </Link>
+        <span style={{ fontSize: 12, color: '#8FA3B8' }}>{alert.domain_name}</span>
+        <span style={{ marginLeft: 'auto', fontSize: 11, color: '#A0B4C8' }}>
+          {MONTHS[month - 1]} {year}
+        </span>
+      </div>
+
+      {/* Indicator name */}
+      <div style={{ fontSize: 15, fontWeight: 600, color: '#0D1B2A', marginBottom: 12 }}>
+        {alert.name}
+      </div>
+
+      {/* Data row */}
+      <div style={{ display: 'flex', gap: 16, alignItems: 'baseline', flexWrap: 'wrap' }}>
+        <div>
+          <span style={{ fontSize: 22, fontWeight: 700, fontFamily: "'JetBrains Mono', monospace",
+            color: statusColor(alert.status) }}>
+            {alert.actual ?? '—'}
+          </span>
+          <span style={{ fontSize: 12, color: '#8FA3B8', marginLeft: 4 }}>{alert.unit} · факт</span>
+        </div>
+        <div>
+          <span style={{ fontSize: 15, fontWeight: 500, color: '#4A6580' }}>{alert.plan ?? alert.target}</span>
+          <span style={{ fontSize: 12, color: '#8FA3B8', marginLeft: 4 }}>{alert.unit} · план</span>
+        </div>
+        {devStr && (
+          <div style={{
+            marginLeft: 'auto',
+            fontSize: 13, fontWeight: 700,
+            color: deviation! >= 0 ? '#1D9E75' : statusColor(alert.status),
+            fontFamily: "'JetBrains Mono', monospace",
+          }}>
+            {devStr}
+          </div>
+        )}
+      </div>
+
+      {/* Progress */}
+      {alert.actual != null && (alert.plan ?? alert.target) > 0 && (
+        <MiniProgress actual={alert.actual} plan={alert.plan ?? alert.target} status={alert.status} />
+      )}
+
+      {/* Footer */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 14 }}>
+        {alert.prev_actual != null && (
+          <span style={{ fontSize: 11, color: '#A0B4C8' }}>
+            Пред. период: {alert.prev_actual} {alert.unit}
+          </span>
+        )}
+        <Link
+          to={`/dept/${alert.dept_id}/kpi/${alert.indicator_id}`}
+          style={{
+            marginLeft: 'auto', fontSize: 12, fontWeight: 600,
+            color: '#1C84C6', textDecoration: 'none',
+            padding: '4px 10px', borderRadius: 6,
+            border: '1px solid rgba(28,132,198,0.25)',
+            background: 'rgba(28,132,198,0.06)',
+          }}
+          onClick={e => e.stopPropagation()}
+        >
+          Взять в работу →
+        </Link>
+      </div>
+    </div>
+  )
 }
 
+/* ═══════════════════════════════════════════════════════════════ */
 export default function AlertsPage() {
   const [data,    setData]    = useState<AlertsResponse | null>(null)
   const [loading, setLoading] = useState(true)
   const [year,    setYear]    = useState(new Date().getFullYear())
   const [month,   setMonth]   = useState(new Date().getMonth() + 1)
-  const [filter,  setFilter]  = useState<'all' | 'red' | 'yellow'>('all')
-  const [groupBy, setGroupBy] = useState<'dept' | 'domain'>('dept')
+  const [tab,     setTab]     = useState<FilterTab>('all')
+  const [deptFilter, setDeptFilter] = useState<string>('all')
 
   useEffect(() => {
     setLoading(true)
-    getAlerts(year, month).then(setData).finally(() => setLoading(false))
+    getAlerts(year, month).then(setData).catch(() => {}).finally(() => setLoading(false))
   }, [year, month])
 
-  const alerts = (data?.alerts ?? []).filter(a => filter === 'all' || a.status === filter)
+  const apiAlerts: AlertItem[] = data?.alerts ?? []
+  const useMock = !loading && apiAlerts.length === 0
 
-  // Группировка
-  const grouped: Record<string, AlertItem[]> = {}
-  for (const a of alerts) {
-    const key = groupBy === 'dept' ? a.dept_name : a.domain_name
-    if (!grouped[key]) grouped[key] = []
-    grouped[key].push(a)
-  }
+  const source = useMock ? MOCK_ALERTS : apiAlerts
+
+  const filtered = source.filter(a => {
+    if (tab === 'red') return a.status === 'red'
+    if (tab === 'yellow') return a.status === 'yellow'
+    if (tab === 'resolved') return false
+    return true
+  }).filter(a => deptFilter === 'all' || a.dept_name === deptFilter)
+
+  const redCount    = source.filter(a => a.status === 'red').length
+  const yellowCount = source.filter(a => a.status === 'yellow').length
+  const totalActive = redCount + yellowCount
+
+  const depts = Array.from(new Set(source.map(a => a.dept_name))).sort()
+
+  const TABS: { key: FilterTab; label: string; count?: number }[] = [
+    { key: 'all',      label: 'Все',            count: totalActive },
+    { key: 'red',      label: 'Критические',    count: redCount },
+    { key: 'yellow',   label: 'Предупреждения', count: yellowCount },
+    { key: 'resolved', label: 'Решённые',       count: 0 },
+  ]
 
   return (
-    <div className="bg-svep-bg min-h-full">
-      <div className="max-w-screen-xl mx-auto px-4 pb-12">
-        <div className="flex flex-wrap items-start justify-between gap-4 py-6">
+    <div style={{ background: '#EEF4FA', minHeight: '100vh', padding: '32px 40px' }}>
+      <div style={{ maxWidth: 960, margin: '0 auto' }}>
+
+        {/* ── Header ─────────────────────────────────────── */}
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+          flexWrap: 'wrap', gap: 16, marginBottom: 28 }}>
           <div>
-            <h1 className="text-2xl font-bold text-svep-primary">Алерты KPI</h1>
-            <p className="text-svep-secondary text-sm mt-1">Показатели, требующие немедленного внимания</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+              <h1 style={{ margin: 0, fontSize: 28, fontFamily: "'Exo 2', sans-serif",
+                fontWeight: 700, color: '#0D1B2A' }}>
+                Сигналы
+              </h1>
+              {totalActive > 0 && (
+                <span style={{
+                  fontSize: 13, fontWeight: 700, color: '#fff',
+                  background: '#EB5757', borderRadius: 100,
+                  padding: '2px 10px',
+                }}>
+                  {totalActive} активных
+                </span>
+              )}
+            </div>
+            <p style={{ margin: 0, fontSize: 14, color: '#4A6580' }}>
+              Отклонения показателей от плановых значений
+            </p>
           </div>
-          <PeriodPicker year={year} month={month} onYear={setYear} onMonth={setMonth} />
+
+          {/* Period selector */}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <select
+              value={month}
+              onChange={e => setMonth(+e.target.value)}
+              style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid rgba(28,132,198,0.2)',
+                background: '#fff', fontSize: 13, color: '#0D1B2A', cursor: 'pointer' }}>
+              {MONTHS.map((m, i) => <option key={i} value={i + 1}>{m}</option>)}
+            </select>
+            <select
+              value={year}
+              onChange={e => setYear(+e.target.value)}
+              style={{ padding: '6px 10px', borderRadius: 8, border: '1px solid rgba(28,132,198,0.2)',
+                background: '#fff', fontSize: 13, color: '#0D1B2A', cursor: 'pointer' }}>
+              {[2024, 2025, 2026].map(y => <option key={y} value={y}>{y}</option>)}
+            </select>
+          </div>
         </div>
 
-        {/* Сводка */}
-        {data && (
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
-            {[
-              { label: 'Всего KPI',    value: data.summary.total,   cls: 'text-svep-primary' },
-              { label: 'В норме',      value: data.summary.green,   cls: 'text-green-600' },
-              { label: 'Предупрежд.',  value: data.summary.yellow,  cls: 'text-amber-600' },
-              { label: 'Критично',     value: data.summary.red,     cls: 'text-red-600' },
-              { label: 'Нет данных',   value: data.summary.no_data, cls: 'text-svep-tertiary' },
-            ].map(s => (
-              <div key={s.label} className="bg-svep-surface border border-svep-border rounded-xl p-4 text-center">
-                <div className={`text-2xl font-bold ${s.cls}`}>{s.value}</div>
-                <div className="text-xs text-svep-tertiary mt-1">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Прогресс-бар здоровья */}
-        {data && data.summary.total > 0 && (
-          <div className="mb-6">
-            <div className="flex items-center justify-between text-xs text-svep-secondary mb-1.5">
-              <span>Здоровье системы</span>
-              <span className="font-bold text-svep-primary">
-                {Math.round(data.summary.green / data.summary.total * 100)}%
-              </span>
-            </div>
-            <div className="h-3 bg-svep-border rounded-full overflow-hidden flex">
-              <div className="bg-green-500 h-full transition-all"
-                style={{ width: `${data.summary.green  / data.summary.total * 100}%` }} />
-              <div className="bg-yellow-500 h-full transition-all"
-                style={{ width: `${data.summary.yellow / data.summary.total * 100}%` }} />
-              <div className="bg-red-500 h-full transition-all"
-                style={{ width: `${data.summary.red    / data.summary.total * 100}%` }} />
-            </div>
-            <div className="flex gap-4 mt-1.5 text-xs text-svep-secondary">
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-green-500 inline-block"/>Норма</span>
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-yellow-500 inline-block"/>Предупреждение</span>
-              <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-red-500 inline-block"/>Критично</span>
-            </div>
-          </div>
-        )}
-
-        {/* Фильтры */}
-        <div className="flex flex-wrap items-center gap-2 mb-6">
-          {([['all','Все'], ['red','Критично'], ['yellow','Предупреждения']] as const).map(([val, lbl]) => (
-            <button key={val} onClick={() => setFilter(val)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                filter === val ? 'bg-svep-accent text-white' : 'bg-gray-100 text-svep-secondary hover:text-svep-primary border border-svep-border'
-              }`}>
-              {lbl} {data && val !== 'all' ? `(${data.summary[val]})` : ''}
+        {/* ── Filter bar ─────────────────────────────────── */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 24, flexWrap: 'wrap' }}>
+          {TABS.map(t => (
+            <button key={t.key} onClick={() => setTab(t.key)} style={{
+              padding: '6px 14px', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 500,
+              border: tab === t.key ? '1px solid #1C84C6' : '1px solid rgba(28,132,198,0.18)',
+              background: tab === t.key ? '#1C84C6' : '#fff',
+              color: tab === t.key ? '#fff' : '#4A6580',
+              transition: 'all 0.15s',
+              display: 'flex', alignItems: 'center', gap: 5,
+            }}>
+              {t.label}
+              {t.count !== undefined && t.count > 0 && (
+                <span style={{
+                  fontSize: 11, fontWeight: 700, lineHeight: 1,
+                  background: tab === t.key ? 'rgba(255,255,255,0.25)' : 'rgba(28,132,198,0.12)',
+                  color: tab === t.key ? '#fff' : '#1C84C6',
+                  borderRadius: 10, padding: '1px 6px',
+                }}>{t.count}</span>
+              )}
             </button>
           ))}
-          <div className="ml-auto flex items-center gap-2 text-xs text-svep-secondary">
-            Группировать:
-            <button onClick={() => setGroupBy('dept')}
-              className={`px-2 py-1 rounded ${groupBy === 'dept' ? 'bg-gray-200 text-svep-primary' : 'hover:text-svep-primary'}`}>
-              По отделу
-            </button>
-            <button onClick={() => setGroupBy('domain')}
-              className={`px-2 py-1 rounded ${groupBy === 'domain' ? 'bg-gray-200 text-svep-primary' : 'hover:text-svep-primary'}`}>
-              По домену
-            </button>
-          </div>
+
+          {/* Dept filter */}
+          {depts.length > 0 && (
+            <select
+              value={deptFilter}
+              onChange={e => setDeptFilter(e.target.value)}
+              style={{ marginLeft: 'auto', padding: '6px 10px', borderRadius: 8,
+                border: '1px solid rgba(28,132,198,0.18)', background: '#fff',
+                fontSize: 13, color: '#0D1B2A', cursor: 'pointer' }}>
+              <option value="all">Все отделы</option>
+              {depts.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+          )}
         </div>
 
+        {/* ── Content ────────────────────────────────────── */}
         {loading ? (
-          <div className="space-y-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-svep-surface border border-svep-border rounded-xl p-5">
-                <Skeleton lines={3} />
-              </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {[1,2,3].map(i => (
+              <div key={i} style={{ background: '#fff', borderRadius: 12, borderLeft: '3px solid #E2E8F0',
+                padding: '20px 24px', height: 120, opacity: 0.6 }} />
             ))}
           </div>
-        ) : alerts.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="text-5xl mb-4">✅</div>
-            <div className="text-xl font-semibold text-svep-primary mb-2">Всё в норме!</div>
-            <div className="text-svep-secondary">Критичных и предупреждающих показателей не найдено</div>
+        ) : filtered.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '80px 0' }}>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>
+              <svg viewBox="0 0 24 24" width={56} height={56} fill="none"
+                stroke="#1D9E75" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"
+                style={{ margin: '0 auto', display: 'block' }}>
+                <circle cx="12" cy="12" r="10"/>
+                <path d="m9 12 2 2 4-4"/>
+              </svg>
+            </div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: '#0D1B2A', marginBottom: 8 }}>
+              Все показатели в норме
+            </div>
+            <div style={{ fontSize: 14, color: '#6B8AA8' }}>
+              Отклонений за выбранный период не обнаружено
+            </div>
           </div>
         ) : (
-          <div className="space-y-6">
-            {Object.entries(grouped).sort().map(([group, items]) => (
-              <div key={group}>
-                <div className="flex items-center gap-2 mb-3">
-                  <h2 className="text-sm font-bold text-svep-secondary uppercase tracking-wider">{group}</h2>
-                  <div className="flex gap-1.5">
-                    {items.filter(i => i.status === 'red').length > 0 && (
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-red-50 text-red-600 border border-red-200">
-                        🔴 {items.filter(i => i.status === 'red').length}
-                      </span>
-                    )}
-                    {items.filter(i => i.status === 'yellow').length > 0 && (
-                      <span className="text-xs px-1.5 py-0.5 rounded bg-yellow-50 text-yellow-600 border border-yellow-200">
-                        🟡 {items.filter(i => i.status === 'yellow').length}
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-3">
-                  {items.map(alert => {
-                    const pct = pctOf(alert.actual, alert.target)
-                    return (
-                      <Link
-                        key={alert.indicator_id}
-                        to={`/dept/${alert.dept_id}/kpi/${alert.indicator_id}`}
-                        className="group bg-svep-surface border border-svep-border hover:border-svep-accent/40 rounded-xl p-4 transition-all hover:-translate-y-0.5"
-                      >
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <StatusDot status={alert.status} />
-                            <span className="text-xs"
-                              style={{ color: alert.domain_color }}>
-                              {alert.domain_icon} {groupBy === 'dept' ? alert.domain_name : alert.dept_name}
-                            </span>
-                          </div>
-                          <TrendBadge trend={alert.trend} />
-                        </div>
-
-                        <div className="text-svep-primary font-medium group-hover:text-svep-accent transition-colors text-sm leading-snug mb-2">
-                          {alert.name}
-                        </div>
-
-                        <div className="flex items-end gap-3">
-                          <div>
-                            <span className={`text-lg font-bold ${alert.status === 'red' ? 'text-red-600' : 'text-amber-600'}`}>
-                              {alert.actual ?? '—'} {alert.unit}
-                            </span>
-                            <span className="text-svep-tertiary text-xs ml-1">факт</span>
-                          </div>
-                          <div className="text-svep-border pb-0.5">·</div>
-                          <div>
-                            <span className="text-svep-secondary text-sm">{alert.target} {alert.unit}</span>
-                            <span className="text-svep-tertiary text-xs ml-1">цель</span>
-                          </div>
-                          {pct !== null && (
-                            <div className="ml-auto text-right">
-                              <span className={`text-sm font-bold ${pct >= 80 ? 'text-amber-600' : 'text-red-600'}`}>
-                                {pct}%
-                              </span>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Прогресс */}
-                        {pct !== null && (
-                          <div className="mt-2 h-1 bg-svep-border rounded-full overflow-hidden">
-                            <div
-                              className={`h-full ${alert.status === 'red' ? 'bg-red-500' : 'bg-yellow-500'}`}
-                              style={{ width: `${Math.min(pct, 100)}%` }}
-                            />
-                          </div>
-                        )}
-
-                        {alert.prev_actual != null && (
-                          <div className="mt-2 text-xs text-svep-tertiary">
-                            Пред. период: {alert.prev_actual} {alert.unit}
-                          </div>
-                        )}
-                      </Link>
-                    )
-                  })}
-                </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {useMock && (
+              <div style={{ padding: '8px 14px', borderRadius: 8, background: 'rgba(28,132,198,0.08)',
+                border: '1px solid rgba(28,132,198,0.2)', fontSize: 12, color: '#4A6580', marginBottom: 4 }}>
+                Показаны демо-данные — API не вернул сигналы за выбранный период
               </div>
-            ))}
+            )}
+            {filtered.map(a => <SignalCard key={`${a.dept_id}-${a.indicator_id}`} alert={a} month={month} year={year} />)}
           </div>
         )}
       </div>
