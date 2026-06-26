@@ -4,7 +4,7 @@ const PAGE_LABELS: Record<string, string> = {
   '/':          'Экосистема',
   '/master':    'Мастер-карта',
   '/dashboard': 'Дашборд',
-  '/alerts':    'Алерты',
+  '/alerts':    'Сигналы',
   '/kaizen':    'Кайдзен',
   '/report':    'Отчёт',
   '/admin':     'Администрирование',

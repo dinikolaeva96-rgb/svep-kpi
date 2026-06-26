@@ -7,7 +7,7 @@ const ROLE_LEVELS: Record<string, number> = { public: 0, dept_head: 1, managemen
 const links = [
   { to: '/',          label: 'Экосистема',   minRole: 0 },
   { to: '/master',    label: 'Мастер-карта', minRole: 0 },
-  { to: '/alerts',    label: 'Алерты',       minRole: 0 },
+  { to: '/alerts',    label: 'Сигналы',       minRole: 0 },
   { to: '/kaizen',    label: 'Кайдзен',      minRole: 0 },
   { to: '/dashboard', label: 'Дашборд',      minRole: 0 },
   { to: '/report',    label: 'Отчёт',        minRole: 0 },

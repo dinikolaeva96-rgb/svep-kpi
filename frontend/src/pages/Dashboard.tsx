@@ -112,7 +112,7 @@ export default function Dashboard() {
           {alerts && (
             <div>
               <div className="mono-num text-2xl font-medium text-amber-600">{alerts.summary.red + alerts.summary.yellow}</div>
-              <div className="eyebrow mt-0.5" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 10 }}>Алертов</div>
+              <div className="eyebrow mt-0.5" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 10 }}>Сигналов</div>
             </div>
           )}
         </div>
@@ -127,7 +127,7 @@ export default function Dashboard() {
 
       <div className="flex items-center gap-1 px-6 py-2 bg-svep-surface border-b border-svep-border shrink-0">
         {SLIDES.map((s, i) => {
-          const labels: Record<Slide, string> = { heatmap: 'Тепловая карта', alerts: 'Алерты', top: 'Рейтинг', trend: 'Тренд' }
+          const labels: Record<Slide, string> = { heatmap: 'Тепловая карта', alerts: 'Сигналы', top: 'Рейтинг', trend: 'Тренд' }
           return (
             <button key={s} onClick={() => goSlide(i)}
               className={`px-3 py-1.5 rounded text-xs font-medium transition-colors uppercase tracking-wider ${
@@ -274,7 +274,7 @@ export default function Dashboard() {
 
       <footer className="px-6 py-2 bg-svep-surface border-t border-svep-border flex items-center justify-between shrink-0">
         <span className="eyebrow" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 10 }}>
-          16 отделов · 106 сотрудников · Проектирование 0.4–220 кВ
+          15 отделов · 106 сотрудников · Проектирование 0.4–220 кВ
         </span>
         <span className="eyebrow" style={{ textTransform: 'none', letterSpacing: 0, fontSize: 10 }}>
           Авто-обновление каждую минуту

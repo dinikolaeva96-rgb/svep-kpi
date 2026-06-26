@@ -32,7 +32,7 @@ const NAV_MAIN = [
 ]
 
 const NAV_WORK = [
-  { to: '/alerts',   label: 'Алерты',      icon: 'bell'  },
+  { to: '/alerts',   label: 'Сигналы',      icon: 'bell'  },
   { to: '/kaizen',   label: 'Кайдзен',     icon: 'zap'   },
   { to: '/report',   label: 'Отчёт',       icon: 'file'  },
 ]

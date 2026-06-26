@@ -106,7 +106,7 @@ export default function Report() {
               {[
                 { label: 'Отделов',    value: master.departments.length, cls: 'text-svep-primary' },
                 { label: 'Зелёная зона', value: master.departments.filter(d => (d.overall_score ?? 0) >= 80).length, cls: 'text-green-600' },
-                { label: 'Алертов',    value: alerts ? alerts.summary.red + alerts.summary.yellow : '…', cls: 'text-amber-600' },
+                { label: 'Сигналов',    value: alerts ? alerts.summary.red + alerts.summary.yellow : '…', cls: 'text-amber-600' },
                 { label: 'Критичных',  value: alerts?.summary.red ?? '…', cls: 'text-red-600' },
               ].map(m => (
                 <div key={m.label} className="bg-svep-surface border border-svep-border rounded-xl p-5 text-center">
@@ -207,7 +207,7 @@ export default function Report() {
               </div>
             </div>
 
-            {/* Алерты */}
+            {/* Сигналы */}
             {alerts && alerts.alerts.length > 0 && (
               <div className="bg-svep-surface border border-svep-border rounded-xl p-6">
                 <h2 className="text-lg font-semibold text-svep-primary mb-4">
