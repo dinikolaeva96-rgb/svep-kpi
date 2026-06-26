@@ -28,10 +28,10 @@ export default function Topbar({ collapsed }: { collapsed: boolean }) {
         right: 0,
         height: 52,
         zIndex: 30,
-        background: 'rgba(10,22,40,0.7)',
+        background: 'rgba(238,244,250,0.85)',
         WebkitBackdropFilter: 'blur(20px)',
         backdropFilter: 'blur(20px)',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        borderBottom: '1px solid rgba(28,132,198,0.1)',
         display: 'flex',
         alignItems: 'center',
         paddingLeft: 24,
@@ -42,7 +42,7 @@ export default function Topbar({ collapsed }: { collapsed: boolean }) {
       <span style={{
         fontSize: 14,
         fontWeight: 600,
-        color: 'rgba(255,255,255,0.8)',
+        color: '#0D1B2A',
         fontFamily: "'Exo 2', sans-serif",
         letterSpacing: '0.02em',
       }}>
