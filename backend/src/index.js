@@ -15,8 +15,9 @@ const kaizenRoutes     = require('./routes/kaizen');
 const alertRoutes      = require('./routes/alerts');
 const trendsRoutes     = require('./routes/trends');
 const usersRoutes      = require('./routes/users');
-const indicatorsRoutes = require('./routes/indicators');
-const auditRoutes      = require('./routes/auditlog');
+const indicatorsRoutes    = require('./routes/indicators');
+const auditRoutes         = require('./routes/auditlog');
+const presentationsRoutes = require('./routes/presentations');
 const swaggerUi        = require('swagger-ui-express');
 const apiSpec          = require('./openapi');
 
@@ -36,7 +37,8 @@ app.use('/api/alerts',      alertRoutes);
 app.use('/api/trends',      trendsRoutes);
 app.use('/api/users',       usersRoutes);
 app.use('/api/indicators',  indicatorsRoutes);
-app.use('/api/audit',       auditRoutes);
+app.use('/api/audit',         auditRoutes);
+app.use('/api/presentations', presentationsRoutes);
 
 app.get('/api/health', (_, res) => res.json({ ok: true, ts: new Date().toISOString() }));
 

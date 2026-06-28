@@ -11,7 +11,8 @@ import Login        from '@/pages/Login'
 import KaizenPage   from '@/pages/KaizenPage'
 import AlertsPage   from '@/pages/AlertsPage'
 import ProfilePage  from '@/pages/ProfilePage'
-import AdminPage    from '@/pages/AdminPage'
+import AdminPage           from '@/pages/AdminPage'
+import PresentationsPage  from '@/pages/PresentationsPage'
 
 function AppRoutes() {
   const { pathname } = useLocation()
@@ -30,6 +31,7 @@ function AppRoutes() {
       <Route path="/alerts"                  element={<AlertsPage />} />
       <Route path="/profile"                 element={<ProfilePage />} />
       <Route path="/admin"                   element={<AdminPage />} />
+      <Route path="/presentations"           element={<PresentationsPage />} />
       <Route path="/login"                   element={<Login />} />
     </Routes>
   )

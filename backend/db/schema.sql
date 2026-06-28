@@ -116,3 +116,14 @@ CREATE INDEX IF NOT EXISTS idx_kpi_values_period    ON kpi_values(period_year, p
 CREATE INDEX IF NOT EXISTS idx_kaizen_dept          ON kaizen(dept_id);
 CREATE INDEX IF NOT EXISTS idx_kaizen_status        ON kaizen(status);
 CREATE INDEX IF NOT EXISTS idx_indicators_dept      ON indicators(dept_id);
+
+CREATE TABLE IF NOT EXISTS presentations (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  author_name TEXT NOT NULL,
+  topic TEXT NOT NULL,
+  deadline TEXT,
+  status TEXT DEFAULT 'planned' CHECK(status IN ('planned','in_progress','done')),
+  sort_order INTEGER DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);

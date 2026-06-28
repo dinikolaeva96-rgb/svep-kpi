@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { getMaster, getAlerts } from '@/api'
+import { getMaster, getAlerts, getPresentations, type Presentation } from '@/api'
 import type { MasterResponse, AlertsResponse } from '@/types'
 import GeometricMotif from '@/components/GeometricMotif'
 import ParticleField from '@/components/ParticleField'
@@ -177,9 +177,10 @@ function CrystalHero({ mouseX, mouseY }: { mouseX: number; mouseY: number }) {
 
 /* ═══════════════════════════════════════════════════════════════ */
 export default function Home() {
-  const [master,  setMaster]  = useState<MasterResponse | null>(null)
-  const [alerts,  setAlerts]  = useState<AlertsResponse | null>(null)
-  const [ready,   setReady]   = useState(false)
+  const [master,        setMaster]        = useState<MasterResponse | null>(null)
+  const [alerts,        setAlerts]        = useState<AlertsResponse | null>(null)
+  const [presentations, setPresentations] = useState<Presentation[]>([])
+  const [ready,         setReady]         = useState(false)
   const [mouse, setMouse] = useState({ x: 0.5, y: 0.5 })
   const heroRef = useRef<HTMLDivElement>(null)
 
@@ -187,6 +188,7 @@ export default function Home() {
     Promise.all([
       getMaster().then(setMaster).catch(() => {}),
       getAlerts().then(setAlerts).catch(() => {}),
+      getPresentations().then(setPresentations).catch(() => {}),
     ]).finally(() => setReady(true))
   }, [])
 
@@ -363,6 +365,78 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── PRESENTATIONS SECTION ───────────────────────────────── */}
+      {presentations.length > 0 && (
+        <section style={{ position: 'relative', zIndex: 1, padding: '0 48px 100px' }}>
+          <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+
+            <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: 36 }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: 'clamp(22px,2.5vw,30px)',
+                  fontFamily: "'Exo 2', sans-serif", fontWeight: 700,
+                  color: 'rgba(255,255,255,0.88)', letterSpacing: '-0.01em' }}>
+                  План докладов
+                </h2>
+                <p style={{ margin: '6px 0 0', fontSize: 14, color: 'rgba(255,255,255,0.32)' }}>
+                  {presentations.length} докладов · {presentations.filter(p => p.status === 'done').length} готово
+                </p>
+              </div>
+              <Link to="/presentations" style={{
+                fontSize: 13, color: 'rgba(33,150,201,0.8)', textDecoration: 'none',
+                display: 'flex', alignItems: 'center', gap: 4,
+              }}>
+                Все доклады →
+              </Link>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 12 }}>
+              {presentations.slice(0, 6).map((p, i) => {
+                const statusColor = p.status === 'done' ? '#1D9E75' : p.status === 'in_progress' ? '#F2994A' : '#5BB8E8'
+                return (
+                  <div key={p.id} className="card-enter" style={{ animationDelay: `${i * 60}ms`,
+                    background: 'rgba(255,255,255,0.04)',
+                    border: '1px solid rgba(255,255,255,0.07)',
+                    borderLeft: `3px solid ${statusColor}`,
+                    borderRadius: 12, padding: '16px 20px',
+                    display: 'flex', alignItems: 'flex-start', gap: 14,
+                  }}>
+                    <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11,
+                      color: 'rgba(255,255,255,0.2)', flexShrink: 0, marginTop: 2 }}>
+                      {String(p.sort_order || i + 1).padStart(2, '0')}
+                    </span>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'rgba(255,255,255,0.88)',
+                        marginBottom: 4, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {p.topic}
+                      </div>
+                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.38)' }}>
+                        {p.author_name}
+                      </div>
+                    </div>
+                    <span style={{
+                      fontSize: 10, fontWeight: 600, padding: '2px 7px', borderRadius: 5,
+                      background: `${statusColor}18`, color: statusColor, flexShrink: 0,
+                    }}>
+                      {p.status === 'done' ? 'Готов' : p.status === 'in_progress' ? 'В работе' : 'План'}
+                    </span>
+                  </div>
+                )
+              })}
+            </div>
+
+            {presentations.length > 6 && (
+              <div style={{ textAlign: 'center', marginTop: 20 }}>
+                <Link to="/presentations" style={{
+                  fontSize: 13, color: 'rgba(255,255,255,0.35)', textDecoration: 'none',
+                }}>
+                  + ещё {presentations.length - 6} докладов
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
     </div>
   )

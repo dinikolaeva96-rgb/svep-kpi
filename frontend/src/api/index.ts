@@ -59,6 +59,30 @@ export const getAudit = (params?: {
   entity?: string; entity_id?: number; user_id?: number; action?: string; limit?: number; offset?: number
 }) => api.get<AuditResponse>('/audit', { params }).then(r => r.data)
 
+// Presentations
+export interface Presentation {
+  id: number
+  author_name: string
+  topic: string
+  deadline: string | null
+  status: 'planned' | 'in_progress' | 'done'
+  sort_order: number
+  created_at: string
+  updated_at: string
+}
+
+export const getPresentations = () =>
+  api.get<Presentation[]>('/presentations').then(r => r.data)
+
+export const createPresentation = (data: Omit<Presentation, 'id' | 'created_at' | 'updated_at'>) =>
+  api.post<{ id: number }>('/presentations', data).then(r => r.data)
+
+export const updatePresentation = (id: number, data: Partial<Omit<Presentation, 'id' | 'created_at' | 'updated_at'>>) =>
+  api.put(`/presentations/${id}`, data).then(r => r.data)
+
+export const deletePresentation = (id: number) =>
+  api.delete(`/presentations/${id}`).then(r => r.data)
+
 // Auth
 export const login = (email: string, password: string) =>
   api.post<{ accessToken: string; refreshToken: string; role: string; name: string }>(
