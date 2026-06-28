@@ -9,17 +9,17 @@ interface GeometricMotifProps {
   style?: CSSProperties
 }
 
-/* Crystal outer contour — 9 points, clockwise, viewBox 0 0 100 120 */
-const PATH = 'M 32,4 L 68,2 L 88,22 L 90,52 L 72,88 L 48,96 L 28,90 L 4,62 L 6,32 Z'
+/* Crystal outer contour — 10 points, asymmetric diamond, viewBox 0 0 100 120 */
+const PATH = 'M 30,3 L 65,0 L 85,18 L 88,48 L 75,82 L 52,98 L 28,95 L 5,68 L 3,35 L 18,10 Z'
 
 /* Facet diagonals */
 const LINES: [string, string][] = [
-  ['32,4',  '90,52'],
-  ['68,2',  '4,62'],
-  ['88,22', '28,90'],
-  ['6,32',  '72,88'],
-  ['32,4',  '48,96'],
-  ['4,62',  '90,52'],
+  ['30,3',  '88,48'],
+  ['65,0',  '5,68'],
+  ['85,18', '28,95'],
+  ['18,10', '75,82'],
+  ['30,3',  '52,98'],
+  ['3,35',  '88,48'],
 ]
 
 const DEFAULT_SIZE: Record<string, number> = {
