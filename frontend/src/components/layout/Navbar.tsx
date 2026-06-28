@@ -48,7 +48,7 @@ export default function Navbar() {
             >
               {({ isActive }) => (
                 <>
-                  {isActive && <GeometricMotif variant="header" className="text-svep-accent !w-3.5 !h-[18px]" />}
+                  {isActive && <GeometricMotif variant="header" color="#2196C9" size={14} />}
                   {l.label}
                 </>
               )}

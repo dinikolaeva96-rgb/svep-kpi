@@ -35,7 +35,7 @@ export default function Login() {
         {/* Logo */}
         <div className="text-center mb-10">
           <div className="flex items-center justify-center mb-5">
-            <GeometricMotif variant="header" className="text-white w-16 h-16" />
+            <GeometricMotif variant="header" color="white" size={56} />
           </div>
           <h1 className="font-brutal font-extrabold text-3xl tracking-[-0.01em] text-white">
             Вход в систему
