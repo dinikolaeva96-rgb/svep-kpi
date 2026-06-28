@@ -18,8 +18,8 @@ export default function GeometricMotif({
   style = {},
 }: GeometricMotifProps) {
   const defaults: Record<string, { size: number; sw: number; op: number }> = {
-    header:    { size: 28,  sw: 1.5, op: 0.9 },
-    sidebar:   { size: 24,  sw: 1.5, op: 0.85 },
+    header:    { size: 28,  sw: 1.8, op: 0.9 },
+    sidebar:   { size: 24,  sw: 1.8, op: 0.85 },
     hero:      { size: 280, sw: 1.1, op: 0.9 },
     watermark: { size: 320, sw: 0.5, op: 0.05 },
     ghost:     { size: 120, sw: 0.7, op: 0.06 },
