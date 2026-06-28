@@ -2,6 +2,7 @@ import { useState, useEffect, type ReactNode } from 'react'
 import { useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Topbar from './Topbar'
+import GeometricMotif from '@/components/GeometricMotif'
 import { getAlerts } from '@/api'
 
 export default function AppLayout({ children }: { children: ReactNode }) {
@@ -42,7 +43,12 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         flexDirection: 'column',
       }}>
         <Topbar collapsed={collapsed} dark={isHome} />
-        <main style={{ marginTop: 52, flex: 1 }}>
+        {!isHome && (
+          <div style={{ position: 'fixed', bottom: -60, right: -60, zIndex: 0, pointerEvents: 'none' }}>
+            <GeometricMotif variant="watermark" color="rgba(28,132,198,1)" opacity={0.04} />
+          </div>
+        )}
+        <main style={{ marginTop: 52, flex: 1, position: 'relative', zIndex: 1 }}>
           {children}
         </main>
       </div>

@@ -29,7 +29,7 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center px-4 overflow-hidden" style={{ background: 'var(--navy)' }}>
-      <GeometricMotif variant="watermark" className="text-white opacity-[0.04] !absolute top-0 right-0" />
+      <GeometricMotif variant="watermark" color="rgba(255,255,255,1)" opacity={0.04} style={{ position: 'absolute', top: 0, right: 0 }} />
 
       <div className="relative w-full max-w-[400px]">
         {/* Logo */}

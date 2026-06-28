@@ -25,7 +25,7 @@ export default function Navbar() {
       <div className="max-w-screen-xl mx-auto px-6 h-full flex items-center gap-5">
         {/* Logo — symbol + abbreviation, divider line, like LOGO-without_descriptor */}
         <Link to="/" className="flex items-center gap-3 shrink-0 text-white hover:opacity-90 transition-opacity">
-          <GeometricMotif variant="header" className="text-svep-accent" />
+          <GeometricMotif variant="header" color="#2196C9" />
           <span style={{ width: 1, height: 20, background: 'rgba(255,255,255,0.2)' }} />
           <span className="font-display font-bold tracking-[.1em]" style={{ fontSize: 15 }}>СВЭП</span>
         </Link>

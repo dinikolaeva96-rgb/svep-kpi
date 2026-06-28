@@ -138,7 +138,7 @@ export default function Sidebar({ collapsed, onToggle, alertCount }: SidebarProp
         flexShrink: 0,
       }}>
         <div style={{ flexShrink: 0 }}>
-          <GeometricMotif variant="header" className="text-svep-accent" />
+          <GeometricMotif variant="sidebar" color="rgba(28,132,198,0.85)" />
         </div>
         {!collapsed && (
           <div>

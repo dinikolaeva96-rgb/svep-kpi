@@ -146,9 +146,9 @@ function CrystalHero({ mouseX, mouseY }: { mouseX: number; mouseY: number }) {
         position: 'absolute',
         transform: `translate(${px * 0.4}px, ${py * 0.4}px)`,
         transition: 'transform 0.5s ease',
-        opacity: 0.06, color: '#1C84C6',
+        opacity: 0.06,
       }}>
-        <GeometricMotif variant="hero" className="crystal-spin-80" style={{ transform: 'scale(1.6)' }} />
+        <GeometricMotif variant="hero" color="#1C84C6" size={448} className="crystal-spin-80" />
       </div>
 
       {/* mid ring */}
@@ -156,9 +156,9 @@ function CrystalHero({ mouseX, mouseY }: { mouseX: number; mouseY: number }) {
         position: 'absolute',
         transform: `translate(${px * 0.65}px, ${py * 0.65}px)`,
         transition: 'transform 0.4s ease',
-        opacity: 0.14, color: '#1C84C6',
+        opacity: 0.14,
       }}>
-        <GeometricMotif variant="hero" className="crystal-spin-rev" style={{ transform: 'scale(1.22)' }} />
+        <GeometricMotif variant="hero" color="#1C84C6" size={342} className="crystal-spin-rev" />
       </div>
 
       {/* inner crystal — full opacity, fastest parallax */}
@@ -166,10 +166,10 @@ function CrystalHero({ mouseX, mouseY }: { mouseX: number; mouseY: number }) {
         position: 'absolute',
         transform: `translate(${px}px, ${py}px)`,
         transition: 'transform 0.25s ease',
-        opacity: 0.72, color: '#2196C9',
+        opacity: 0.72,
         filter: 'drop-shadow(0 0 16px rgba(33,150,201,0.5))',
       }}>
-        <GeometricMotif variant="hero" className="crystal-spin" />
+        <GeometricMotif variant="hero" color="#2196C9" size={280} className="crystal-spin" />
       </div>
     </div>
   )
