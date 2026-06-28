@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import React from 'react'
 
 interface GeometricMotifProps {
   variant?: 'header' | 'sidebar' | 'hero' | 'watermark' | 'ghost'
@@ -6,51 +6,28 @@ interface GeometricMotifProps {
   color?: string
   opacity?: number
   className?: string
-  style?: CSSProperties
-}
-
-/* 18 facets from original AI source — outer facets (1-indexed) use thicker stroke */
-const OUTER_FACETS = new Set([1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14])
-
-const FACETS = [
-  "73.9,44.9 65.9,28.8 91.5,9.4",          // 1  outer
-  "91.5,90.6 65.9,71.2 73.9,55.1",          // 2  outer
-  "58.5,86.0 63.9,75.1 88.1,93.4",          // 3  outer
-  "49.8,93.4 45.5,86.9 52.2,88.6",          // 4  outer
-  "20.3,80.6 39.0,85.3 43.7,92.4",          // 5  outer
-  "23.0,61.2 35.6,80.2 7.3,73.1",           // 6  outer
-  "4.7,33.5 15.6,50.0 4.8,66.4",            // 7  outer
-  "20.6,57.6 11.4,64.6 18.3,54.1",          // 8  inner
-  "18.3,46.0 11.3,35.4 20.7,42.5",          // 9  inner
-  "35.7,19.7 23.0,38.8 7.1,26.8",           // 10 outer
-  "43.7,7.6 39.1,14.6 20.3,19.3",           // 11 outer
-  "49.8,6.6 52.1,11.3 45.5,13.0",           // 12 outer
-  "81.0,4.1 56.6,10.2 53.6,4.1",            // 13 outer
-  "58.5,14.0 88.2,6.5 63.9,24.9",           // 14 outer
-  "37.8,50.0 62.2,31.6 71.3,50.0 62.2,68.4",                    // 15 inner
-  "34.2,52.7 60.2,72.4 54.0,84.8 42.1,81.8 26.6,58.5",          // 16 inner
-  "26.6,41.6 42.2,18.1 54.0,15.1 60.2,27.6 34.2,47.3",          // 17 inner
-  "30.7,50.0 24.2,54.9 21.0,50.0 24.2,45.2",                    // 18 inner
-]
-
-const CONFIGS: Record<string, { size: number; outerStroke: number; innerStroke: number }> = {
-  header:    { size: 28,  outerStroke: 1.5, innerStroke: 0.8 },
-  sidebar:   { size: 24,  outerStroke: 1.5, innerStroke: 0.8 },
-  hero:      { size: 280, outerStroke: 1.2, innerStroke: 0.65 },
-  watermark: { size: 320, outerStroke: 0.6, innerStroke: 0.35 },
-  ghost:     { size: 120, outerStroke: 0.8, innerStroke: 0.45 },
+  style?: React.CSSProperties
 }
 
 export default function GeometricMotif({
   variant = 'header',
   size,
   color = '#1C84C6',
-  opacity = 1,
-  className,
-  style,
+  opacity,
+  className = '',
+  style = {},
 }: GeometricMotifProps) {
-  const cfg = CONFIGS[variant] ?? CONFIGS.header
+  const defaults: Record<string, { size: number; sw: number; op: number }> = {
+    header:    { size: 28,  sw: 1.5, op: 0.9 },
+    sidebar:   { size: 24,  sw: 1.5, op: 0.85 },
+    hero:      { size: 280, sw: 1.1, op: 0.9 },
+    watermark: { size: 320, sw: 0.5, op: 0.05 },
+    ghost:     { size: 120, sw: 0.7, op: 0.06 },
+  }
+  const cfg = defaults[variant] ?? defaults.header
   const sz = size ?? cfg.size
+  const op = opacity ?? cfg.op
+  const sw = cfg.sw
 
   return (
     <svg
@@ -58,25 +35,41 @@ export default function GeometricMotif({
       height={sz}
       viewBox="0 0 100 100"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
+      color={color}
       className={className}
-      style={{ opacity, ...style }}
+      style={{ opacity: op, ...style }}
     >
-      {FACETS.map((pts, i) => {
-        const isOuter = OUTER_FACETS.has(i + 1)
-        return (
-          <polygon
-            key={i}
-            points={pts}
-            fill="none"
-            stroke={color}
-            strokeWidth={isOuter ? cfg.outerStroke : cfg.innerStroke}
-            strokeLinejoin="round"
-            strokeLinecap="round"
-            opacity={isOuter ? 1 : 0.75}
-          />
-        )
-      })}
+      <polygon points="73.86,44.89 65.87,28.77 91.48,9.42" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="91.48,9.42 73.86,44.89 65.87,71.23" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="65.87,71.23 73.86,55.11 91.48,90.55" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="58.54,85.98 63.93,75.15 88.13,93.42" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="88.13,93.42 58.54,85.98 56.68,89.75" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="56.68,89.75 81.12,95.89 53.61,95.89" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="49.77,93.42 45.47,86.94 52.17,88.61" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="52.17,88.61 49.77,93.42 39.03,85.3" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="39.03,85.3 43.71,92.37 20.25,80.61" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="23.0,61.16 35.65,80.21 7.26,73.08" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="7.26,73.08 23.0,61.16 15.64,50.05" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="15.64,50.05 4.79,66.44 4.68,33.5" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="20.64,57.58 11.41,64.56 18.32,54.09" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="18.32,54.09 20.64,57.58 11.31,35.38" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="11.31,35.38 20.68,42.45 18.32,45.97" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="35.72,19.67 23.04,38.84 7.12,26.83" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="7.12,26.83 35.72,19.67 39.1,14.57" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="39.1,14.57 20.25,19.3 43.75,7.56" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="49.77,6.58 52.13,11.3 45.54,12.97" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="45.54,12.97 49.77,6.58 56.64,10.19" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="56.64,10.19 53.61,4.08 81.05,4.08" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="58.54,13.95 88.17,6.55 63.93,24.85" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="63.93,24.85 58.54,13.95 62.21,31.55" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="62.21,31.55 71.33,49.98 62.21,68.45" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="62.21,68.45 37.8,50.02 60.23,72.37" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="60.23,72.37 54.03,84.84 42.09,81.85" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="42.09,81.85 26.59,58.48 34.24,52.7" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="26.63,41.56 42.2,18.06 54.0,15.1" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="54.0,15.1 60.23,27.63 34.24,47.3" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="34.24,47.3 26.63,41.56 24.23,54.86" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
+      <polygon points="24.23,54.86 21.03,50.05 24.23,45.17" fill="none" stroke="currentColor" strokeWidth={sw} strokeLinejoin="round" strokeLinecap="round"/>
     </svg>
   )
 }
