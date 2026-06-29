@@ -8,12 +8,12 @@ import CountUp from '@/components/CountUp'
 
 /* ── Domain config ─────────────────────────────────────────── */
 const DOMAIN_META = [
-  { code: 'quality',    label: 'Производство',           desc: 'Эффективность производственных процессов',  color: '#2196C9', mock: 82 },
-  { code: 'delivery',   label: 'Бережливое производство', desc: 'Устранение потерь и оптимизация',            color: '#1D9E75', mock: 91 },
-  { code: 'cost',       label: 'Люди',                    desc: 'Развитие и мотивация сотрудников',           color: '#9B51E0', mock: 78 },
-  { code: 'safety',     label: 'Знания и технологии',     desc: 'Компетенции и инновации',                    color: '#F2994A', mock: 85 },
-  { code: 'morale',     label: 'Внешняя среда',           desc: 'Взаимодействие с клиентами и партнёрами',    color: '#EB5757', mock: 73 },
-  { code: 'innovation', label: 'Культура и среда',        desc: 'Корпоративная культура',                     color: '#F2C94C', mock: 88 },
+  { code: 'output',   label: 'Выработка',       desc: 'Объём выполненных работ и томов',             color: '#1C84C6', mock: 82 },
+  { code: 'rework',   label: 'Переделки',        desc: 'Замечания экспертизы и возвраты на доработку',color: '#EB5757', mock: 74 },
+  { code: 'waste',    label: 'Потери времени',   desc: 'Ожидания, простои, отклонения от сроков',     color: '#F2994A', mock: 78 },
+  { code: 'quality',  label: 'Качество',         desc: 'Точность, стандарты, повторяемость ошибок',   color: '#1D9E75', mock: 85 },
+  { code: 'standard', label: 'Стандартизация',   desc: 'Типовые решения, шаблоны, нормативы',         color: '#9B51E0', mock: 80 },
+  { code: 'people',   label: 'Люди',             desc: 'Комплект штата, обучение, кайдзен',           color: '#D4A900', mock: 88 },
 ]
 
 /* ── Sparkline ──────────────────────────────────────────────── */
@@ -34,12 +34,12 @@ function Sparkline({ data, color }: { data: number[]; color: string }) {
 /* ── Domain icon ────────────────────────────────────────────── */
 function DomainIcon({ code, color }: { code: string; color: string }) {
   const paths: Record<string, string[]> = {
-    quality:    ['M8 3h8v4a4 4 0 0 1-8 0V3Z','M8 7H5a3 3 0 0 0 3 3','M16 7h3a3 3 0 0 1-3 3','M12 14v4M9 21h6'],
-    delivery:   ['M12 3a9 9 0 1 0 0 18A9 9 0 0 0 12 3z','M12 7v5l3 2'],
-    cost:       ['M12 3v18','M16 7H10a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6H8'],
-    safety:     ['M12 3 5 6v6c0 4 3 7 7 9 4-2 7-5 7-9V6l-7-3Z'],
-    morale:     ['M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2','M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z'],
-    innovation: ['M9 18h6','M10 21h4','M12 3a6 6 0 0 0-3 11c.5.4 1 1.2 1 2h4c0-.8.5-1.6 1-2a6 6 0 0 0-3-11Z'],
+    output:   ['M18 20V10','M12 20V4','M6 20v-6'],
+    rework:   ['M1 4v6h6','M23 20v-6h-6','M20.49 9A9 9 0 0 0 5.64 5.64L1 10 M23 14l-4.64 4.36A9 9 0 0 1 3.51 15'],
+    waste:    ['M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z','M12 6v6l4 2'],
+    quality:  ['M22 11.08V12a10 10 0 1 1-5.93-9.14','M22 4 12 14.01l-3-3'],
+    standard: ['M12 2L2 7l10 5 10-5-10-5z','M2 17l10 5 10-5','M2 12l10 5 10-5'],
+    people:   ['M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2','M23 21v-2a4 4 0 0 1 0 7.73','M16 3.13a4 4 0 0 1 0 7.75','M9 7a4 4 0 1 0 0 8 4 4 0 0 0 0-8z'],
   }
   return (
     <svg viewBox="0 0 24 24" width={22} height={22} fill="none"

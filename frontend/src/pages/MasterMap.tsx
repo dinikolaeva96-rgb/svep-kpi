@@ -25,7 +25,7 @@ export default function MasterMap() {
             <h1 className="font-brutal font-extrabold text-3xl tracking-[-0.01em] text-svep-primary">
               Мастер-карта
             </h1>
-            <p className="text-svep-secondary text-sm mt-1">16 отделов × 6 lean-доменов</p>
+            <p className="text-svep-secondary text-sm mt-1">15 отделов × 6 доменов</p>
           </div>
           <div className="flex gap-2">
             <select
